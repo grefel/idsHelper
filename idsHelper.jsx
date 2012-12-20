@@ -81,6 +81,15 @@ var idsTools = function () {
 		},
 
 		/**
+		* Ungroup recursively 
+		* @param {Object} _object Document, Layer, Page or Group... 
+		*/
+		ungroupAll : function (_object) {
+			while (_object.groups.length != 0) {
+				_object.groups.everyItem().ungroup();
+			}
+		},		
+		/**
 		* Selects the given Object, shows the page and centers the view.
 		* @param {Object} _object PageItem, Text or Object to show
 		* @return {Bool} Status of execution: <b>true</b> everything ok, <b>false</b> something went wrong
@@ -111,13 +120,20 @@ var idsTools = function () {
 		* Creates a new Page and TextFrame. The TextFrame fits into the page margins
 		* @param {Page} _page The reference page
 		* @param {MasterSpread} [_master] The MasterSpread for the new page. If no value is given, the MasterSpread from <code>_page</code> is applied.
-		* @return {TextFrame} The new TextFrame
+		* @param {_newPage} [Boolean]  Create a new page or not?
+		* @return {TextFrame} The new TextFrame		
 		*/
-		addPageTextFrame : function(_page, _master) {
+		addPageTextFrame : function(_page, _master, _newPage) {
+			if (_newPage == undefined)  _newPage = true;
 			var _dok = _page.parent.parent;
-			var _newPage = _dok.pages.add(LocationOptions.AFTER, _page);
-			if (_master == undefined) _newPage.appliedMaster = _page.appliedMaster;
-			else _newPage.appliedMaster = _master;
+			if (_newPage ) {
+				var _newPage = _dok.pages.add(LocationOptions.AFTER, _page);
+				if (_master == undefined) _newPage.appliedMaster = _page.appliedMaster;
+				else _newPage.appliedMaster = _master;
+			}
+			else {
+				var _newPage = _page;
+			}
 			var _y1 = _newPage.marginPreferences.top;
 			var _y2 = _dok.documentPreferences.pageHeight - _newPage.marginPreferences.bottom;
 			if (_newPage.side == PageSideOptions.LEFT_HAND) {
@@ -129,7 +145,19 @@ var idsTools = function () {
 				var _x2 = _dok.documentPreferences.pageWidth - _newPage.marginPreferences.right;
 			}
 			var _tf = _newPage.textFrames.add();
+			var oldV = this.resetMeasurement();
+//~ 			var _breite = _x2 -_x1;
+//~ 			_breiteInPunkt = new UnitValue(  _breite+ "mm").as("pt");
+//~ 			var _hoehe = _y2 -_y1;
+//~ 			_hoeheInPunkt = new UnitValue( _hoehe + "mm").as("pt");	
+//~ 			_tf.resize(BoundingBoxLimits.GEOMETRIC_PATH_BOUNDS, AnchorPoint.TOP_LEFT_ANCHOR , ResizeMethods.REPLACING_CURRENT_DIMENSIONS_WITH, [_breiteInPunkt, _hoeheInPunkt ]);
+//~ 			_tf.move([_tf.geometricBounds[1] + _x1, _tf.geometricBounds[0] + _y1]);
 			_tf.geometricBounds = [_y1 , _x1 , _y2 , _x2];
+			
+			_tf.textFramePreferences.textColumnCount = _page.marginPreferences.columnCount;
+			_tf.textFramePreferences.textColumnGutter =  _page.marginPreferences.columnGutter
+			
+			this.setMeasurement(oldV);
 			return _tf;
 		},
 
@@ -255,6 +283,19 @@ var idsTools = function () {
 			return true;
 		},
 
+		
+		/**
+		* Removes all TextFrame but first from a Story.
+		* @param {Story} The Story
+		* @return {Story} The story
+		*/
+		
+		removeContainerFromStory : function (story) {
+			while (story.textContainers.length > 1) {
+				story.textContainers[story.textContainers.length -1].remove();
+			}
+			return story;
+		},		
 		/** 
 		* Array sort (according to DIN 5007 Variante 1) includes German umlauts. <code>_array.sort(idsTools.sort_DE)</code>
 		*/ 	
@@ -274,6 +315,46 @@ var idsTools = function () {
 				return a;
 			}	
 		},
+		/**
+		* Unique an Array 
+		* @param {Array} The Array to unique
+		* @return {Array} Array
+		*/
+		unique : function (arr) {
+			var hash = {}, result = [];
+			for ( var i = 0, l = arr.length; i < l; ++i ) {
+				if ( !hash.hasOwnProperty(arr[i]) ) { //it works with objects! in FF, at least
+					hash[ arr[i] ] = true;
+					result.push(arr[i]);
+				}
+			}
+			return result;
+		},
+		/**
+		* Unique and count  Array 
+		* @param {Array} Sorted Array
+		* @return {Array} Array
+		*/
+		uniqueAndCount : function (array) {
+			var arr = [], a = [], b = [], prev;
+			
+			for ( var i = 0; i < array.length; i++ ) {
+				if (array[i] != "") arr.push(array[i]);
+			}
+			
+
+			for ( var i = 0; i < arr.length; i++ ) {
+				if ( arr[i] !== prev ) {
+					a.push(arr[i]);
+					b.push(1);
+				} else {
+					b[b.length-1]++;
+				}
+				prev = arr[i];
+			}
+
+			return [a, b];
+		},	
 		/**
 		* Reads a File and returns the String
 		* @param {File} _file The File to read
@@ -340,6 +421,156 @@ var idsTools = function () {
 			} 
 			return _filter;
 		},
+		/**
+		* Loads XMP Library 
+		* @return {Boolean} Result
+		*/		
+		loadXMPLibrary : function () {
+			if ( !ExternalObject.AdobeXMPScript ){
+				try {
+					ExternalObject.AdobeXMPScript = new ExternalObject("lib:AdobeXMPScript");
+				}
+				catch (e) {
+//~ 					alert("Unable to load the AdobeXMPScript library!"); 
+					return false;
+				}
+			}
+			return true;
+		},
+		/**
+		* Unloads XMP Library 
+		* @return {Boolean} Result
+		*/
+		unloadXMPLibrary : function () { 
+			if( ExternalObject.AdobeXMPScript ) { 
+				try { 
+					ExternalObject.AdobeXMPScript.unload(); 
+					ExternalObject.AdobeXMPScript = undefined; 
+				}
+				catch (e) {
+//~ 					alert("Unable to unload the AdobeXMPScript library!"); 
+					return false;
+				}
+			}
+			return true;
+		},
+		/* Finds a PageItem By Name via allPageItems ...  */
+		getPageItemByName : function (page, name) {
+			for (var i = 0; i < page.allPageItems.length; i++) {
+				if (page.allPageItems[i].name == name) return page.allPageItems[i];
+			}
+			return null;
+		},
+		/**
+		* Returns a PageItem by give CoordinateRange
+		* @param {Page} page The page to search on
+		* @param {Array} x The horizontal range, Array with two values 
+		* @param {Array} y The vertical range, Array with two values 
+		* @return {PageItem|null} The PageItem
+		*/
+		/*   */
+		getPageItemsByCoord : function (page, x , y ) {
+			for (var i = 0; i < page.pageItems.length; i++) {
+				var pItem = page.pageItems[i];
+				var x1 = pItem.geometricBounds[1];
+				var y1 = pItem.geometricBounds[0];		
+				if (x1 >= x[0] && x1 <= x[1] && y1 >= y[0] && y1 <= y[1]) {
+					return pItem;
+				} 
+			}
+			return null;
+		},
+	
+		/* Finds a ParagraphStyle */
+		getParagraphStyle : function  (dok, styleName, groupName, fuzzy) {
+			return this.getStyle(dok, styleName, groupName, fuzzy, "Paragraph");
+		},
+
+		/* Finds a CharacterStyle*/
+		getCharacterStyle : function (dok, styleName, groupName, fuzzy) {
+			return this.getStyle(dok, styleName, groupName, fuzzy, "Character");
+		},
+		/* Finds an ObjectStyle */
+		getObjectStyle : function (dok, styleName, groupName, fuzzy) {
+			return this.getStyle(dok, styleName, groupName, fuzzy, "Object");
+		},
+	
+		getStyle : function (dok, styleName, groupName, fuzzy, styleType) {
+			if (groupName == undefined) groupName = false;
+			if (fuzzy == undefined) fuzzy = false;
+			
+			if (!groupName) {
+				// Passt genau
+				if (styleType == "Paragraph" && dok.paragraphStyles.itemByName(styleName).isValid )  return dok.paragraphStyles.itemByName(styleName);
+				if (styleType == "Character" && dok.characterStyles.itemByName(styleName).isValid )  return dok.characterStyles.itemByName(styleName);
+				if (styleType == "Object" && dok.objectStyles.itemByName(styleName).isValid )  return dok.objectStyles.itemByName(styleName);
+					if (fuzzy) {
+					if (styleType == "Paragraph") var allStyles = dok.allParagraphStyles;
+					if (styleType == "Character") var allStyles = dok.allCharacterStyles;
+					if (styleType == "Object") var allStyles = dok.allObjectStyles;
+					for (i =0; i < allStyles.length; i++) {
+						if (compareStyleNames (allStyles[i].name, styleName)) return allStyles[i];
+					}
+				}
+			}
+			// Gruppe Berüchsichtigen
+			else {
+				if (styleType == "Paragraph" && dok.paragraphStyleGroups.itemByName(groupName).isValid ) {
+					var styleGroup = dok.paragraphStyleGroups.itemByName(groupName);
+					if (styleGroup.paragraphStyles.itemByName(styleName).isValid )  return styleGroup.paragraphStyles.itemByName(styleName);
+				} 
+				if (styleType == "Character" && dok.characterStyleGroups.itemByName(groupName).isValid ) {
+					var styleGroup = dok.characterStyleGroups.itemByName(groupName);
+					if (styleGroup.characterStyles.itemByName(styleName).isValid )  return styleGroup.characterStyles.itemByName(styleName);
+				} 
+				if (styleType == "Object" && dok.objectStyleGroups.itemByName(groupName).isValid ) {
+					var styleGroup = dok.objectStyleGroups.itemByName(groupName);
+					if (styleGroup.objectStyleGroups.itemByName(styleName).isValid )  return styleGroup.objectStyleGroups.itemByName(styleName);
+				} 
+			
+				if (fuzzy) {
+					if (styleType == "Paragraph") var allGroups = dok.paragraphStyleGroups;
+					if (styleType == "Character") var allGroups = dok.characterStyleGroups;
+					if (styleType == "Object") var allGroups = dok.objectStyleGroups;
+					for (var i = 0;  i < allGroups.length; i++) {
+						if (compareStyleNames (allGroups[i].name, groupName)) {
+							if (styleType == "Paragraph") var allStyles = allGroups[i].paragraphStyles;
+							if (styleType == "Character") var allStyles = allGroups[i].characterStyles;
+							if (styleType == "Object") var allStyles = allGroups[i].objectStyles;
+
+							for (var k = 0;  k < allStyles.length; k++) {
+								if (compareStyleNames (allStyles[k].name, styleName)) return allStyles[k];
+							}
+						}
+					}
+					// Er war nicht in der Gruppe also gucken wir ob er irgendwo sonst aufzutreiben ist
+					if (styleType == "Paragraph") var allStyles = dok.allParagraphStyles;
+					if (styleType == "Character") var allStyles = dok.allCharacterStyles;
+					if (styleType == "Object") var allStyles = dok.allObjectStyles;
+					for (i =0; i < allStyles.length; i++) {
+						if (compareStyleNames (allStyles[i].name, styleName)) return allStyles[i];
+					}
+				}
+			}
+			// Es konnte kein Format gefunden werden
+			return null;
+			// Helper 
+			function compareStyleNames (name, compareName) {
+				var cleanedCurrentStyleName = cleanStyleName(name);
+				var cleanedPStyleName = cleanStyleName(compareName);
+				if (cleanedCurrentStyleName.indexOf (cleanedPStyleName) > -1) return true;
+				else return false;
+
+				function cleanStyleName (stylename) {
+					cleanName = stylename.toLowerCase();
+					cleanName = cleanName.replace(/\s+/g,"");
+					cleanName = cleanName.replace(/\(.+?\)/, "");
+					cleanName = cleanName.replace(/_a\*$/, "");
+					return cleanName;
+				}
+			}
+		},
+
 		// Thanks @Marc Autret http://forums.adobe.com/message/3152162#3152162
 		getProgressBar : function (title) { 
 			var windowSUI = new Window('palette', ' '+title, {x:0, y:0, width:340, height:60});
@@ -358,7 +589,51 @@ var idsTools = function () {
 				 ++pb.value;
 			}
 			return windowSUI;
-		}
+		},
+		/**
+		* Reset Measurement Units to mm 
+		* @return {Object} The old values
+		*/
+		resetMeasurement : function() {
+			var dok = app.documents[0];
+			var oldValues = {
+				horizontalMeasurementUnits:dok.viewPreferences.horizontalMeasurementUnits,
+				verticalMeasurementUnits:dok.viewPreferences.verticalMeasurementUnits,
+				viewPreferences:dok.viewPreferences.rulerOrigin,
+				zeroPoint:dok.zeroPoint
+			}
+		
+			dok.viewPreferences.horizontalMeasurementUnits = MeasurementUnits.MILLIMETERS;
+			dok.viewPreferences.verticalMeasurementUnits = MeasurementUnits.MILLIMETERS;
+			dok.viewPreferences.rulerOrigin = RulerOrigin.PAGE_ORIGIN;
+			dok.zeroPoint = [0,0]
+			return oldValues;
+		},
+		/**
+		* Set Measurement as given in values
+		* @return {Object} The old values
+		*/
+		setMeasurement : function(values) {
+			var dok = app.documents[0];
+			dok.viewPreferences.horizontalMeasurementUnits = values.horizontalMeasurementUnits;
+			dok.viewPreferences.verticalMeasurementUnits = values.verticalMeasurementUnits;
+			dok.viewPreferences.rulerOrigin = values.viewPreferences;
+			dok.zeroPoint = values.zeroPoint;
+		},
+		trim : function (string) {
+			string = string.replace(/^\s+/g,"");
+			string = string.replace(/\s+$/g,"");
+			return string;
+		},
+		/**
+		* Recursively remove XML-Tags 
+		* @param {XMLElement} xmlElement The XML-Element to start from 
+		*/
+		untag : function (xmlElement) {
+			while(xmlElement.xmlElements.length > 0) {
+				xmlElement.xmlElements[-1].untag();
+			}
+		}	
 	}
 }
 
@@ -493,6 +768,16 @@ var idsLog = function (_logFile, _logLevel) {
 			if (logLevel <= 1)  writeLog(_message, "INFO"); 
 		},
 		/**
+		* Writes a info log message und displays an Alert-Window
+		* @param {String} _message Message to log.
+		*/
+		infoAlert : function (_message) {
+			if (logLevel <= 2) {
+				writeLog(_message, "INFO"); 
+				alert ("[INFO]\n" + _message);
+			}
+		},		
+		/**
 		* Writes a warn log message
 		* @param {String} _message Message to log.
 		*/
@@ -512,7 +797,7 @@ var idsLog = function (_logFile, _logLevel) {
 	
 		
 		/**
-		* Writes a warn log message
+		* Writes a error log message
 		* @param {String} _message Message to log.
 		*/
 		error : function (_message) {
