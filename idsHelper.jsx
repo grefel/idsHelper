@@ -175,14 +175,26 @@ var idsTools = function () {
 				if (_page.side == PageSideOptions.RIGHT_HAND) {
 					var _mpi = _page.appliedMaster.pages[1].pageItems.itemByName(_label);
 					try { // Try to release the object
-						return _mpi.override(_page);
+						var pageItem = _mpi.override(_page);
+						var piBounds = pageItem.geometricBounds;
+						var mpiBounds = _mpi.geometricBounds;
+						if (piBounds[0]  != mpiBounds[0] ||  piBounds[1]  != mpiBounds[1] ) {
+							pageItem.geometricBounds = mpiBounds;
+						} 						
+						return pageItem;
 					} catch (e) { // Object was already released but was deleted as it is also included in _pi!
 						return null;
 					}
 				} else { // Left or Single
 					var _mpi = _page.appliedMaster.pages[0].pageItems.itemByName(_label);
 					try {
-						return _mpi.override(_page);
+						var pageItem = _mpi.override(_page);
+						var piBounds = pageItem.geometricBounds;
+						var mpiBounds = _mpi.geometricBounds;
+						if (piBounds[0]  != mpiBounds[0] ||  piBounds[1]  != mpiBounds[1] ) {
+							pageItem.geometricBounds = mpiBounds;
+						} 						
+						return pageItem;
 					} catch (e) {
 						return null;
 					}
