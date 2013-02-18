@@ -583,6 +583,22 @@ var idsTools = function () {
 			}
 		},
 
+		/**
+		* Pad a number widt leading zero
+		* @param {String|Number} number  Startvalue
+		* @param {Number} length The length of the String 
+		* @param {String} fill The value to fill up, Default is '0'
+		* @return {String} 
+		*/
+		pad : function (number, length, fill) { 
+			if (fill == undefined) fill = "0";
+				var str = '' + number;
+				while (str.length < length) {
+					str = fill + str;
+				}   
+				return str;
+		},
+
 		// Thanks @Marc Autret http://forums.adobe.com/message/3152162#3152162
 		getProgressBar : function (title) { 
 			var windowSUI = new Window('palette', ' '+title, {x:0, y:0, width:340, height:60});
