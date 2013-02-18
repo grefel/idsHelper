@@ -494,17 +494,16 @@ var idsTools = function () {
 		},
 	
 		/* Finds a ParagraphStyle */
-		getParagraphStyle : function  (dok, styleName, groupName, fuzzy) {
-			return this.getStyle(dok, styleName, groupName, fuzzy, "Paragraph");
+		getParagraphStyle : function  (styleName, groupName, fuzzy) {
+			return this.getStyle(app.activeDocument, styleName, groupName, fuzzy, "Paragraph");
 		},
-
 		/* Finds a CharacterStyle*/
-		getCharacterStyle : function (dok, styleName, groupName, fuzzy) {
-			return this.getStyle(dok, styleName, groupName, fuzzy, "Character");
+		getCharacterStyle : function (styleName, groupName, fuzzy) {
+			return this.getStyle(app.activeDocument, styleName, groupName, fuzzy, "Character");
 		},
 		/* Finds an ObjectStyle */
-		getObjectStyle : function (dok, styleName, groupName, fuzzy) {
-			return this.getStyle(dok, styleName, groupName, fuzzy, "Object");
+		getObjectStyle : function (styleName, groupName, fuzzy) {
+			return this.getStyle(app.activeDocument, styleName, groupName, fuzzy, "Object");
 		},
 	
 		getStyle : function (dok, styleName, groupName, fuzzy, styleType) {
