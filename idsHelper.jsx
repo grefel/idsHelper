@@ -474,6 +474,20 @@ var idsTools = function () {
 			return null;
 		},
 		/**
+		* Distributes the columns of a table relatively to the available width. TODO add support for borders
+		* @param {Table} table The table 
+		* @param {Number} width The desired width
+		* @return {void} 
+		*/		
+		distributeColumns  : function (table, width) {
+			var tableWidth = table.width;
+			for (var i = 0; i < table.columns.length; i++) {
+					var col = table.columns[i];
+					var ratio = col.width/tableWidth;
+					col.width = ratio * width;
+			}
+		},	
+		/**
 		* Returns a PageItem by give CoordinateRange
 		* @param {Page} page The page to search on
 		* @param {Array} x The horizontal range, Array with two values 
