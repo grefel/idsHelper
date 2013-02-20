@@ -366,7 +366,45 @@ var idsTools = function () {
 			}
 
 			return [a, b];
-		},	
+		},
+		/**
+		* Locate a File   
+		* @param {String} name The filename too look after 
+		* @param {String} folderName 
+		* @param {Boolean} recursive defaults to false
+		* @param {Boolean} verbose defaults to false 
+		* @return {File|null} The file 
+		*/
+		/*File */ getFile : function (name, folderName, recursive, verbose) {
+			if (recursive == undefined)  recursive = false;
+			if (verbose == undefined) verbose = false;
+			if (folderName == undefined) {
+				try {
+					folderName  = app.activeScript.parent;
+				} 
+				catch (e) { 
+					/* We're running from the ESTK*/
+					folderName = File(e.fileName).parent;
+				}
+			}
+			
+			name =  name.replace (/file:\/\//, "");
+			if (name == "") return null;
+			var file =  File (folderName  + "/" + name);
+			
+			if (!file.exists) {		
+				if (verbose) { 
+					var file =  File.openDialog ("Bitte wählen Sie die Datei [" + name  + "] aus");
+					if (!file || !file.exists) {
+						return null;
+					}
+				}
+				else {
+					return null;
+				}
+			}
+			return file;
+		},
 		/**
 		* Reads a File and returns the String
 		* @param {File} _file The File to read
