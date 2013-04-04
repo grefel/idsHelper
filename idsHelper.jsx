@@ -145,7 +145,7 @@ var idsTools = function () {
 				var _x2 = _dok.documentPreferences.pageWidth - _newPage.marginPreferences.right;
 			}
 			var _tf = _newPage.textFrames.add();
-			var oldV = this.resetMeasurement();
+			var oldV = this.resetDefaults();
 //~ 			var _breite = _x2 -_x1;
 //~ 			_breiteInPunkt = new UnitValue(  _breite+ "mm").as("pt");
 //~ 			var _hoehe = _y2 -_y1;
