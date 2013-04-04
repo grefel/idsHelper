@@ -504,7 +504,9 @@ var idsTools = function () {
 			}
 			return true;
 		},
-		/* Finds a PageItem By Name via allPageItems ...  */
+		/** Finds a PageItem By Name via allPageItems ...  
+		* 	
+		*/
 		getPageItemByName : function (page, name) {
 			for (var i = 0; i < page.allPageItems.length; i++) {
 				if (page.allPageItems[i].name == name) return page.allPageItems[i];
@@ -673,15 +675,21 @@ var idsTools = function () {
 		* Reset Measurement Units to mm 
 		* @return {Object} The old values
 		*/
-		resetMeasurement : function() {
+		resetDefaults : function() {
 			var dok = app.documents[0];
 			var oldValues = {
 				horizontalMeasurementUnits:dok.viewPreferences.horizontalMeasurementUnits,
 				verticalMeasurementUnits:dok.viewPreferences.verticalMeasurementUnits,
 				viewPreferences:dok.viewPreferences.rulerOrigin,
-				zeroPoint:dok.zeroPoint
-			}
-		
+				zeroPoint:dok.zeroPoint,
+				textDefaultParStyle:dok.textDefaults.appliedParagraphStyle,
+				textDefaultCharStyle:dok.textDefaults.appliedCharacterStyle
+			}		
+			dok.textDefaults.appliedCharacterStyle = dok.characterStyles[0];
+			dok.textDefaults.appliedParagraphStyle = dok.paragraphStyles[1];
+//~ 	px.idDocument.pageItemDefaults.appliedGraphicObjectStyle
+//~ 	px.idDocument.pageItemDefaults..appliedGridObjectStyle
+//~ 	px.idDocument.pageItemDefaults..appliedTextObjectStyle		
 			dok.viewPreferences.horizontalMeasurementUnits = MeasurementUnits.MILLIMETERS;
 			dok.viewPreferences.verticalMeasurementUnits = MeasurementUnits.MILLIMETERS;
 			dok.viewPreferences.rulerOrigin = RulerOrigin.PAGE_ORIGIN;
@@ -692,12 +700,14 @@ var idsTools = function () {
 		* Set Measurement as given in values
 		* @return {Object} The old values
 		*/
-		setMeasurement : function(values) {
+		setDefaults : function(values) {
 			var dok = app.documents[0];
 			dok.viewPreferences.horizontalMeasurementUnits = values.horizontalMeasurementUnits;
 			dok.viewPreferences.verticalMeasurementUnits = values.verticalMeasurementUnits;
 			dok.viewPreferences.rulerOrigin = values.viewPreferences;
 			dok.zeroPoint = values.zeroPoint;
+			dok.textDefaults.appliedParagraphStyle = textDefaultParStyle;
+			dok.textDefaults.appliedCharacterStyle =textDefaultCharStyle;
 		},
 		trim : function (string) {
 			string = string.replace(/^\s+/g,"");
