@@ -168,16 +168,24 @@ var idsTools = function () {
 		*/
 			
 		scaleToWidth : function (frame, width, maxImageSize) {
-			if (maxImageSize == undefined) maxImageSize == false;
-			
+			if (maxImageSize == undefined) maxImageSize == false;			
 			var gb = frame.geometricBounds;
 			frame.geometricBounds = [gb[0], gb[1], gb[0] + width, gb[1] + width];
 			frame.fit(FitOptions.FILL_PROPORTIONALLY);
-			if (frame.graphics != undefined && maxImageSize && frame.graphics[0].absoluteHorizontalScale > 100) {
-				frame.graphics[0].absoluteHorizontalScale = 100;
-				frame.graphics[0].absoluteVerticalScale = 100;
-			} 
-			frame.fit(FitOptions.FRAME_TO_CONTENT);
+			if (frame.graphics != undefined)
+				var graphic = frame.graphics[0];
+				if (maxImageSize && frame.graphics[0].absoluteHorizontalScale > 100) {
+					graphic.absoluteHorizontalScale = 100;
+					graphic.absoluteVerticalScale = 100;
+				}
+				if ((frame.geometricBounds[3] - frame.geometricBounds[1]) < (graphic.geometricBounds[3] - graphic.geometricBounds[1]) ) {
+					frame.fit(FitOptions.PROPORTIONALLY);
+					frame.fit(FitOptions.FRAME_TO_CONTENT);
+				} 
+				else {
+					frame.fit(FitOptions.FRAME_TO_CONTENT);
+				}			
+			}
 		},
 		/** Scales a frame to a given height 
 			@param {PageItem} frame The frame to scale
@@ -186,16 +194,24 @@ var idsTools = function () {
 		*/
 			
 		scaleToHeight : function (frame, height, maxImageSize) {
-			if (maxImageSize == undefined) maxImageSize == false;
-			
+			if (maxImageSize == undefined) maxImageSize == false;			
 			var gb = frame.geometricBounds;
-			frame.geometricBounds = [gb[0], gb[1], gb[0] + height, gb[1] + height];
+			frame.geometricBounds = [gb[0], gb[1], gb[0] + width, gb[1] + width];
 			frame.fit(FitOptions.FILL_PROPORTIONALLY);
-			if (frame.graphics != undefined && maxImageSize && frame.graphics[0].absoluteHorizontalScale > 100) {
-				frame.graphics[0].absoluteHorizontalScale = 100;
-				frame.graphics[0].absoluteVerticalScale = 100;
-			} 
-			frame.fit(FitOptions.FRAME_TO_CONTENT);
+			if (frame.graphics != undefined)
+				var graphic = frame.graphics[0];
+				if (maxImageSize && frame.graphics[0].absoluteHorizontalScale > 100) {
+					graphic.absoluteHorizontalScale = 100;
+					graphic.absoluteVerticalScale = 100;
+				}
+				if ((frame.geometricBounds[2] - frame.geometricBounds[0]) < (graphic.geometricBounds[2] - graphic.geometricBounds[0]) ) {
+					frame.fit(FitOptions.PROPORTIONALLY);
+					frame.fit(FitOptions.FRAME_TO_CONTENT);
+				} 
+				else {
+					frame.fit(FitOptions.FRAME_TO_CONTENT);
+				}			
+			}			
 		},
 
 		/**
