@@ -157,7 +157,7 @@ var idsTools = function () {
 			_tf.textFramePreferences.textColumnCount = _page.marginPreferences.columnCount;
 			_tf.textFramePreferences.textColumnGutter =  _page.marginPreferences.columnGutter
 			
-			this.setMeasurement(oldV);
+			this.setDefaults(oldV);
 			return _tf;
 		},
 
