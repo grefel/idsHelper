@@ -161,6 +161,42 @@ var idsTools = function () {
 			return _tf;
 		},
 
+		/** Scales a frame to a given width 
+			@param {PageItem} frame The frame to scale
+			@param {Number} width The widht in millimeters
+			@param {Boolean} maxImageSize is a maximum image size greater 100% allowed?
+		*/
+			
+		scaleToWidth : function (frame, width, maxImageSize) {
+			if (maxImageSize == undefined) maxImageSize == false;
+			
+			var gb = frame.geometricBounds;
+			frame.geometricBounds = [gb[0], gb[1], gb[0] + width, gb[1] + width];
+			frame.fit(FitOptions.PROPORTIONALLY);
+			if (frame.graphics[0].absoluteHorizontalScale > 100) {
+				frame.graphics[0].absoluteHorizontalScale = 100;
+				frame.graphics[0].absoluteVerticalScale = 100;
+			} 
+			frame.fit(FitOptions.FRAME_TO_CONTENT);
+		},
+		/** Scales a frame to a given height 
+			@param {PageItem} frame The frame to scale
+			@param {Number} height The height in millimeters
+			@param {Boolean} maxImageSize is a maximum image size greater 100% allowed?
+		*/
+			
+		scaleToWidth : function (frame, height, maxImageSize) {
+			if (maxImageSize == undefined) maxImageSize == false;
+			
+			var gb = frame.geometricBounds;
+			frame.geometricBounds = [gb[0], gb[1], gb[0] + height, gb[1] + height];
+			frame.fit(FitOptions.PROPORTIONALLY);
+			if (frame.graphics[0].absoluteHorizontalScale > 100) {
+				frame.graphics[0].absoluteHorizontalScale = 100;
+				frame.graphics[0].absoluteVerticalScale = 100;
+			} 
+			frame.fit(FitOptions.FRAME_TO_CONTENT);
+		},
 
 		/**
 		* Try to find and override a labeled (CS3/CS4) or named (CS5) MasterPageItem on a Page
