@@ -172,7 +172,7 @@ var idsTools = function () {
 			var gb = frame.geometricBounds;
 			frame.geometricBounds = [gb[0], gb[1], gb[0] + width, gb[1] + width];
 			frame.fit(FitOptions.FILL_PROPORTIONALLY);
-			if (frame.graphics != undefined)
+			if (frame.graphics != undefined) {
 				var graphic = frame.graphics[0];
 				if (maxImageSize && frame.graphics[0].absoluteHorizontalScale > 100) {
 					graphic.absoluteHorizontalScale = 100;
@@ -198,7 +198,7 @@ var idsTools = function () {
 			var gb = frame.geometricBounds;
 			frame.geometricBounds = [gb[0], gb[1], gb[0] + width, gb[1] + width];
 			frame.fit(FitOptions.FILL_PROPORTIONALLY);
-			if (frame.graphics != undefined)
+			if (frame.graphics != undefined) {
 				var graphic = frame.graphics[0];
 				if (maxImageSize && frame.graphics[0].absoluteHorizontalScale > 100) {
 					graphic.absoluteHorizontalScale = 100;
