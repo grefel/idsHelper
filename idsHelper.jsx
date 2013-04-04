@@ -172,8 +172,8 @@ var idsTools = function () {
 			
 			var gb = frame.geometricBounds;
 			frame.geometricBounds = [gb[0], gb[1], gb[0] + width, gb[1] + width];
-			frame.fit(FitOptions.PROPORTIONALLY);
-			if (frame.graphics[0].absoluteHorizontalScale > 100) {
+			frame.fit(FitOptions.FILL_PROPORTIONALLY);
+			if (maxImageSize && frame.graphics[0].absoluteHorizontalScale > 100) {
 				frame.graphics[0].absoluteHorizontalScale = 100;
 				frame.graphics[0].absoluteVerticalScale = 100;
 			} 
@@ -185,13 +185,13 @@ var idsTools = function () {
 			@param {Boolean} maxImageSize is a maximum image size greater 100% allowed?
 		*/
 			
-		scaleToWidth : function (frame, height, maxImageSize) {
+		scaleToHeight : function (frame, height, maxImageSize) {
 			if (maxImageSize == undefined) maxImageSize == false;
 			
 			var gb = frame.geometricBounds;
 			frame.geometricBounds = [gb[0], gb[1], gb[0] + height, gb[1] + height];
-			frame.fit(FitOptions.PROPORTIONALLY);
-			if (frame.graphics[0].absoluteHorizontalScale > 100) {
+			frame.fit(FitOptions.FILL_PROPORTIONALLY);
+			if (maxImageSize && frame.graphics[0].absoluteHorizontalScale > 100) {
 				frame.graphics[0].absoluteHorizontalScale = 100;
 				frame.graphics[0].absoluteVerticalScale = 100;
 			} 
