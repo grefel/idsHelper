@@ -742,8 +742,8 @@ var idsTools = function () {
 			dok.viewPreferences.verticalMeasurementUnits = values.verticalMeasurementUnits;
 			dok.viewPreferences.rulerOrigin = values.viewPreferences;
 			dok.zeroPoint = values.zeroPoint;
-			dok.textDefaults.appliedParagraphStyle = textDefaultParStyle;
-			dok.textDefaults.appliedCharacterStyle =textDefaultCharStyle;
+			dok.textDefaults.appliedParagraphStyle = values.textDefaultParStyle;
+			dok.textDefaults.appliedCharacterStyle = values.textDefaultCharStyle;
 		},
 		trim : function (string) {
 			string = string.replace(/^\s+/g,"");
