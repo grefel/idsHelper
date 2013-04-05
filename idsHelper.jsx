@@ -225,7 +225,12 @@ var idsTools = function () {
 			var _pi = _page.pageItems.itemByName(_label);
 			if (_pi == null ) {
 				if (_page.side == PageSideOptions.RIGHT_HAND) {
-					var _mpi = _page.appliedMaster.pages[1].pageItems.itemByName(_label);
+					var _mPage = _page.appliedMaster.pages[1];
+					var _mpi = _mPage.pageItems.itemByName(_label);
+					while (_mpi == null && _mPage.appliedMaster != null) {
+						_mpi = _mPage.appliedMaster.pages[1].pageItems.itemByName(_label);
+						_mPage = _mPage.appliedMaster.pages[1];
+					}
 					try { // Try to release the object
 						var pageItem = _mpi.override(_page);
 						var piBounds = pageItem.geometricBounds;
@@ -238,7 +243,12 @@ var idsTools = function () {
 						return null;
 					}
 				} else { // Left or Single
-					var _mpi = _page.appliedMaster.pages[0].pageItems.itemByName(_label);
+					var _mPage = _page.appliedMaster.pages[0];
+					var _mpi = _mPage.pageItems.itemByName(_label);
+					while (_mpi == null && _mPage.appliedMaster != null) {
+						_mpi = _mPage.appliedMaster.pages[0].pageItems.itemByName(_label);
+						_mPage = _mPage.appliedMaster.pages[0];
+					}					
 					try {
 						var pageItem = _mpi.override(_page);
 						var piBounds = pageItem.geometricBounds;
