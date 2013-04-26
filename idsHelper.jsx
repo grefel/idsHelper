@@ -172,7 +172,7 @@ var idsTools = function () {
 			var gb = frame.geometricBounds;
 			frame.geometricBounds = [gb[0], gb[1], gb[0] + width, gb[1] + width];
 			frame.fit(FitOptions.FILL_PROPORTIONALLY);
-			if (frame.graphics != undefined) {
+			if (frame.graphics != undefined && frame.graphics[0].isValid) {
 				var graphic = frame.graphics[0];
 				if (maxImageSize && frame.graphics[0].absoluteHorizontalScale > 100) {
 					graphic.absoluteHorizontalScale = 100;
@@ -329,7 +329,7 @@ var idsTools = function () {
 				_lastTC.nextTextFrame = _tf;
 				_lastTC = _tf;
 			}
-			while (_lastTC.characters.length == 0) {
+			while (_story.textContainers.length > 1 && _lastTC.characters.length == 0) {
 				var _page = this.getPageByObject(_lastTC);
 				_page.remove();
 				_lastTC = _story.textContainers[_story.textContainers.length - 1];
