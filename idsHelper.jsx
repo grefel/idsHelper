@@ -468,6 +468,27 @@ var idsTools = function () {
 			return file;
 		},
 		/**
+		* Get Files Recursively
+		* @param folder
+		*/
+		/* Array */ getFilesRecursively : function (folder, fileArray) {
+			if (fileArray == undefined) fileArray = [];
+			var children = folder.getFiles();
+			for (var i = 0; i < children.length; i++) {
+				var child = children[i];
+				if (child instanceof File) {
+					fileArray.push(child);
+				}
+				else if (child instanceof Folder) {
+					fileArray = getFilesRecursively (child, fileArray);
+				}
+				else {
+					throw new Error("The object at \"" + child.fullName + "\" is a child of a folder and yet is not a file or folder.");
+				}
+			}
+			return fileArray;
+		},	
+		/**
 		* Reads a File and returns the String
 		* @param {File} _file The File to read
 		* @return {String} The content of the File or <b>false</b>
