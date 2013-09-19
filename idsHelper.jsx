@@ -154,8 +154,8 @@ var idsTools = function () {
 //~ 			_tf.move([_tf.geometricBounds[1] + _x1, _tf.geometricBounds[0] + _y1]);
 			_tf.geometricBounds = [_y1 , _x1 , _y2 , _x2];
 			
-			_tf.textFramePreferences.textColumnCount = _page.marginPreferences.columnCount;
-			_tf.textFramePreferences.textColumnGutter =  _page.marginPreferences.columnGutter
+			_tf.textFramePreferences.textColumnCount = _newPage.marginPreferences.columnCount;
+			_tf.textFramePreferences.textColumnGutter =  _newPage.marginPreferences.columnGutter
 			
 			this.setDefaults(oldV);
 			return _tf;
