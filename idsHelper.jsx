@@ -454,17 +454,23 @@ var idsTools = function () {
 			if (name == "") return null;
 			var file =  File (folderName  + "/" + name);
 			
-			if (!file.exists) {		
-				if (verbose) { 
-					var file =  File.openDialog ("Bitte wählen Sie die Datei [" + name  + "] aus");
-					if (!file || !file.exists) {
-						return null;
-					}
+			if (!file.exists && recursive) {
+				var fileArray = this.getFilesRecursively (new Folder (folderName));
+				for (var i = 0; i < fileArray.length; i++) {
+					if (fileArray[i].name == name ) return fileArray[i];
+					if (fileArray[i].displayName == name ) return fileArray[i];
 				}
-				else {
+			}
+			if (!file.exists &&  verbose) { 
+				var file =  File.openDialog ("Bitte wählen Sie die Datei [" + name  + "] aus");
+				if (!file || !file.exists) {
 					return null;
 				}
 			}
+			else {
+				return null;
+			}
+		
 			return file;
 		},
 		/**
@@ -480,7 +486,7 @@ var idsTools = function () {
 					fileArray.push(child);
 				}
 				else if (child instanceof Folder) {
-					fileArray = getFilesRecursively (child, fileArray);
+					fileArray = this.getFilesRecursively (child, fileArray);
 				}
 				else {
 					throw new Error("The object at \"" + child.fullName + "\" is a child of a folder and yet is not a file or folder.");
