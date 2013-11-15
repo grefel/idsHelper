@@ -520,6 +520,9 @@ var idsTools = function () {
 		* @return {Bool} <b>true</b> everything worked fine, {Error} something went wrong
 		*/
 		writeTextFile : function (_file, _string) {
+			if (_file.constructor.name == "String") {
+				_file = new File(_file);
+			}
 			if (_file.constructor.name == "File") {
 				try {
 					_file.encoding = "UTF-8";
