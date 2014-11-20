@@ -7,13 +7,13 @@
  * @version 0.3
  * @date 10.10.2011
  */
-
-
+/**   idsHelpler,jsx  ***************************************************************/
+{
 /**
 * Helper and tools for common InDesign scripting tasks
 * @class <b>idsTools</b> contains InDesign JavaScript Extensions. Include this library and use the idsTools object in your script.<br/><br/><code>#include "idsHelper.jsx"<br/>[...]<br/>_ids = idsTools()<br/>_ids.getPageByObject(_pageItem)</code><br/>
 */
-var idsTools = function () {
+var idsTools = idsTools || function () {
 	return { 
 		/**
 		* Returns the <b>Page</b> which contains the Object
@@ -96,6 +96,8 @@ var idsTools = function () {
 		*/
 		showIt : function (_object) {
 			if (_object != null) {
+				if (_object.hasOwnProperty ("sourcePageItem")) _object = _object.sourcePageItem;
+				if (_object.hasOwnProperty ("sourceText")) _object = _object.sourceText;
 				var _spread = this.getSpreadByObject (_object);
 				if (_spread != null) {
 					var _dok = _spread.parent;
@@ -313,28 +315,31 @@ var idsTools = function () {
 			return _versalHoehe;
 		},
 
+
 		/**
 		* Checks the last TextFrame of the Story. If there is an overflow new Pages and TextFrames are added.
 		* @param {Story} _story The Story to check
 		* @return {TextFrame} The last TextFrame
 		*/
 		checkOverflow : function (_story) {
+			_story.insertionPoints[-1].contents = SpecialCharacters.ZERO_WIDTH_NONJOINER;
 			var _lastTC = _story.textContainers[_story.textContainers.length - 1];
 			var _run = true;
 			while (_lastTC.overflows && _run) {
 				var _last = _story.textContainers.length -1;
-				if (_story.textContainers[_last].characters.length == 0 && _story.textContainers[_last -1].characters.length == 0 && _story.textContainers[_last -2].characters.length ==0 ) _run = false;
+				if (_story.textContainers[_last].characters.length == 0 && _last -1 > -1 && _story.textContainers[_last -1].characters.length == 0 && _last -1 > -2 && _story.textContainers[_last -2].characters.length ==0 ) _run = false;
 				var _page = this.getPageByObject(_lastTC);
 				var _tf = this.addPageTextFrame(_page);
 				_lastTC.nextTextFrame = _tf;
 				_lastTC = _tf;
 			}
+			var framesDeleted = false;
 			while (_story.textContainers.length > 1 && _lastTC.characters.length == 0) {
 				var _page = this.getPageByObject(_lastTC);
 				_page.remove();
 				_lastTC = _story.textContainers[_story.textContainers.length - 1];
 			}
-			return _lastTC;
+			_story.characters[-1].contents = "";
 		},
 
 
@@ -527,7 +532,7 @@ var idsTools = function () {
 				try {
 					_file.encoding = "UTF-8";
 					_file.open( "w" );
-					_file.writeln (_string);
+					_file.write (_string);
 					_file.close ();
 					return true;
 				} catch (e) {return e}
@@ -806,6 +811,17 @@ var idsTools = function () {
 			string = string.replace(/\s+$/g,"");
 			return string;
 		},
+		
+		/**
+		* Rounds to a given Number of decimal, default = 2
+		* @param {Number} value Number tor round
+		* @param {Number} decimals Number of decimal place
+		* @return {Number} The rounded value
+		*/
+		roundToDecimal : function (value, decimals) {
+			if (!decimals) decimals = 2;
+			return Math.round( value*Math.pow(10, decimals)) / Math.pow(10, decimals);
+		},
 		/**
 		* Recursively remove XML-Tags 
 		* @param {XMLElement} xmlElement The XML-Element to start from 
@@ -816,7 +832,7 @@ var idsTools = function () {
 			}
 		}	
 	}
-}
+}();
 
 /**
 * Hashmap for JavaScript
@@ -912,8 +928,10 @@ var idsMap = function () {
 var idsLog = function (_logFile, _logLevel) {
 	if (_logFile.constructor.name == "String") {
 		this.logFile = File (_logFile);
+	} 
+	else {
+		this.logFile = _logFile;
 	}
-	this.logFile = _logFile;
 	this.SEVERITY = [];
 	this.SEVERITY["OFF"] = 4;
 	this.SEVERITY["ERROR"] = 3;
@@ -924,11 +942,14 @@ var idsLog = function (_logFile, _logLevel) {
 	this.writeLog = function (_message, _severity) {
 		logFile.open("e");
 		logFile.seek(logFile.length);	
+		var  stack = $.stack.split("\n");
+		stack.splice (stack.length-3, 3);
+		stack = stack.join(" - ");
 		try {
-			logFile.writeln(Date() + " [" + _severity + "] " + ((_severity.length == 4) ? " [" : "[")  + app.activeScript.name + "] " + _message);
+			logFile.writeln(Date() + " [" + _severity + "] " + ((_severity.length == 4) ? " [" : "[")  + _message + "] " + stack);
 		} catch (e) {
 			//We're running from ESTK 
-			logFile.writeln(Date() + " [" + _severity + "] " + ((_severity.length == 4) ? " [" : "[")  + "ESTK] " + _message);
+			logFile.writeln(Date() + " [" + _severity + "] " + ((_severity.length == 4) ? " [" : "[")  + _message + "] " + stack);
 		}
 		logFile.close();
 	}
@@ -986,5 +1007,4 @@ var idsLog = function (_logFile, _logLevel) {
 		}
 	} //  return 
 }
-
-"idsHelper.jsx loaded.";
+}
