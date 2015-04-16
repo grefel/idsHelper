@@ -272,14 +272,22 @@ var idsTools = idsTools || function () {
 		/**
 		* Resolves the next Paragraph object. Use this function instead of <code>nextItem()</code> 
 		* from the collection Paragraphs as this method is much quicker with long Text objects.
-		* @param {Paragraph} _par The reference Paragraph 
+		* @param {Paragraph} par The reference Paragraph 
 		* @return {Paragraph} The next Paragraph or null
 		*/
-		nextParagraph : function (_par) {
-			var _lastCharLetzterIndex = _par.characters[-1].index;
-			var _firstCharNaechster = _par.parentStory.characters[_lastCharLetzterIndex + 1];
-			if (_firstCharNaechster != null ) return _firstCharNaechster.paragraphs[0];
-			else return null;
+		nextParagraph : function (par) {
+			if ( par == undefined || !par.hasOwnProperty('baseline')) {
+				return null;
+			}
+			var last_ip = null, next_ip = null, next_paragraph = null;
+			last_ip = (par.constructor.name == 'Paragraph') ? par.insertionPoints[-1] : par.paragraphs[-1].insertionPoints[-1];
+			next_ip = par.parent.insertionPoints.item(last_ip.index);
+			if (next_ip.isValid) {
+				return next_ip.paragraphs[0];
+			}
+			else {
+				return null;			
+			}
 		},
 
 		/**
