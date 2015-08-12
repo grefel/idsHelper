@@ -163,12 +163,30 @@ var idsTools = idsTools || function () {
 			return _tf;
 		},
 
+		/**
+		* Get the type area of the page 
+		* @param {Page} page The reference page
+		* @return {Array} Type area Array [y1,x1,y2,x2]
+		*/
+		getTypeArea : function (page) {
+			var doc = page.parent.parent;
+			var y1 = page.marginPreferences.top;
+			var y2 = doc.documentPreferences.pageHeight - page.marginPreferences.bottom;
+			if (page.side == PageSideOptions.LEFT_HAND) {
+				var x1 = page.marginPreferences.right;
+				var x2 = doc.documentPreferences.pageWidth - page.marginPreferences.left;
+			} 
+			else {
+				var x1 = page.marginPreferences.left;
+				var x2 = doc.documentPreferences.pageWidth - page.marginPreferences.right;
+			}			
+			return [y1 , x1 , y2 , x2];
+		},		
 		/** Scales a frame to a given width 
 			@param {PageItem} frame The frame to scale
 			@param {Number} width The widht in millimeters
 			@param {Boolean} maxImageSize is a maximum image size greater 100% allowed?
-		*/
-			
+		*/			
 		scaleToWidth : function (frame, width, maxImageSize) {
 			if (maxImageSize == undefined) maxImageSize == false;			
 			var gb = frame.geometricBounds;
