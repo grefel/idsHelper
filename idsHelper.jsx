@@ -359,7 +359,6 @@ var idsTools = idsTools || function () {
 				_lastTC.nextTextFrame = _tf;
 				_lastTC = _tf;
 			}
-			var framesDeleted = false;
 			while (_story.textContainers.length > 1 && _lastTC.characters.length == 0) {
 				var _page = this.getPageByObject(_lastTC);
 				_page.remove();
@@ -806,7 +805,8 @@ var idsTools = idsTools || function () {
 				viewPreferences:dok.viewPreferences.rulerOrigin,
 				zeroPoint:dok.zeroPoint,
 				textDefaultParStyle:dok.textDefaults.appliedParagraphStyle,
-				textDefaultCharStyle:dok.textDefaults.appliedCharacterStyle
+				textDefaultCharStyle:dok.textDefaults.appliedCharacterStyle,
+				transformReferencePoint:dok.layoutWindows[0].transformReferencePoint
 			}		
 			dok.textDefaults.appliedCharacterStyle = dok.characterStyles[0];
 			dok.textDefaults.appliedParagraphStyle = dok.paragraphStyles[1];
@@ -816,7 +816,8 @@ var idsTools = idsTools || function () {
 			dok.viewPreferences.horizontalMeasurementUnits = MeasurementUnits.MILLIMETERS;
 			dok.viewPreferences.verticalMeasurementUnits = MeasurementUnits.MILLIMETERS;
 			dok.viewPreferences.rulerOrigin = RulerOrigin.PAGE_ORIGIN;
-			dok.zeroPoint = [0,0]
+			dok.zeroPoint = [0,0];
+			dok.layoutWindows[0].transformReferencePoint = AnchorPoint.TOP_LEFT_ANCHOR;
 			return oldValues;
 		},
 		/**
@@ -831,6 +832,8 @@ var idsTools = idsTools || function () {
 			dok.zeroPoint = values.zeroPoint;
 			dok.textDefaults.appliedParagraphStyle = values.textDefaultParStyle;
 			dok.textDefaults.appliedCharacterStyle = values.textDefaultCharStyle;
+			dok.layoutWindows[0].transformReferencePoint = values.transformReferencePoint;
+
 		},
 		trim : function (string) {
 			string = string.replace(/^\s+/g,"");
@@ -966,11 +969,11 @@ var idsLog = function (_logFile, _logLevel) {
 	this.SEVERITY["DEBUG"] = 0;
 	this.logLevel = (_logLevel == undefined) ? 0 : SEVERITY[_logLevel];
 	this.writeLog = function (_message, _severity) {
+		logFile.encoding = "UTF-8";
 		logFile.open("e");
 		logFile.seek(logFile.length);	
 		var  stack = $.stack.split("\n");
-		stack.splice (stack.length-3, 3);
-		stack = stack.join(" - ");
+		stack = stack[stack.length -3];
 		try {
 			logFile.writeln(Date() + " [" + _severity + "] " + ((_severity.length == 4) ? " [" : "[")  + _message + "] " + stack);
 		} catch (e) {
