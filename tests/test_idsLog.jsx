@@ -26,7 +26,7 @@ function main () {
 	idsTesting.assertEquals("Logger throws an Error when Constructor is called without arguments.", true, errorThrown);  
 	
 	log = idsLog.getLogger(logFile, "INFO");
-	log.isSilent(true);
+	log.disableAlerts(true);
 	idsTesting.assertEquals("Logger instantiates.", true, log != null);  		
 }
 
