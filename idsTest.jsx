@@ -10,6 +10,7 @@
 #include ../idsTest.jsx
 idsTesting.insertBlock("Testing idsLog");  
 idsTesting.assertEquals("Message", true, "somethingToTest");  
+idsTesting.htmlReport();
 
 */
 $.global.hasOwnProperty('idsTesting') || (function(HOST, SELF) {  
@@ -65,6 +66,15 @@ $.global.hasOwnProperty('idsTesting') || (function(HOST, SELF) {
 			INNER.testResults.push({failed:false, message:message, result:"Expected: " +expected + " Actual: "+ actual });
 		}
 	};
+	SELF.assertString = function(message, expected, actual) { 		        
+		if (expected !== actual) {
+			INNER.testResults.push({failed:true, message:message, result:"Expected: " +expected + " Actual: "+ actual });
+			if (INNER.consoleLog) $.writeln("Test: " + message + "\nExpected: " +expected + "\nActual: "+ actual + "\n\n")			
+		}		
+		else {
+			INNER.testResults.push({failed:false, message:message, result:"Expected: " +expected + " Actual: "+ actual });
+		}
+	};
 	SELF.assertRegExInFile = function(message, regex, file) { 		        
 		var string = INNER.readTextFile(file);
 		if (!string.match(regex)) {
@@ -78,7 +88,17 @@ $.global.hasOwnProperty('idsTesting') || (function(HOST, SELF) {
 	SELF.assertStringInFile = function(message, searchValue, file) { 		        
 		var string = INNER.readTextFile(file);
 		if (string.indexOf (searchValue) == -1) {
-			INNER.testResults.push({failed:true, message:message, result:"regex: " +regex });
+			INNER.testResults.push({failed:true, message:message, result:"searchValue: " +searchValue });
+			if (INNER.consoleLog) $.writeln("Test: " + message + "\nExpected: " +expected + "\nActual: "+ actual + "\n\n")			
+		}		
+		else {
+			INNER.testResults.push({failed:false, message:message, result:"searchValue: " +searchValue });
+		}
+	};
+	SELF.assertStringNotInFile = function(message, searchValue, file) { 		        
+		var string = INNER.readTextFile(file);
+		if (string.indexOf (searchValue) > -1) {
+			INNER.testResults.push({failed:true, message:message, result:"searchValue: " +searchValue });
 			if (INNER.consoleLog) $.writeln("Test: " + message + "\nExpected: " +expected + "\nActual: "+ actual + "\n\n")			
 		}		
 		else {
