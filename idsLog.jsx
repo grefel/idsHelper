@@ -18,6 +18,8 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 	* PRIVATE
 	*/
 	var INNER = {};
+	INNER.version = "2016-03-29--0.9"
+	INNER.disableAlerts = false;
 	INNER.SEVERITY = [];
 	INNER.SEVERITY["OFF"] = 4;
 	INNER.SEVERITY["ERROR"] = 3;
@@ -33,9 +35,16 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 		file.writeln(Date() + " [" + severity + "] " + ((severity.length == 4) ? " [" : "[") + msg + "] Function: " + stack);		
 		file.close();
 	};
-	INNER.showAlert = function(msg){ alert(msg) };
-	INNER.showMessages = function(msg) { alert(msg) };
-
+	INNER.showAlert = function(msg){
+		if (!INNER.disableAlerts) {
+			alert(msg) 
+		}
+	};
+	INNER.showMessages = function(msg) { 
+		if (!INNER.disableAlerts) {
+			alert(msg) 
+		}
+	};
 
     /****************
     * API 
@@ -45,9 +54,9 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
     * Returns a log Object
     * @logFile {File|String} Path to logfile as File Object or String.
     * @logLevel {String} Log Threshold  "OFF", "ERROR", "WARN", "INFO", "DEBUG"
-    * @silentMode {Boolean} Show alerts
+    * @disableAlerts {Boolean} Show alerts
     */
-	SELF.getLogger = function(logFile, logLevel, silentMode) {
+	SELF.getLogger = function(logFile, logLevel, disableAlerts) {
 		if (logFile == undefined) {
 			throw Error("Cannot instantiate Log without Logfile. Please provide a File");
 		}
@@ -64,8 +73,8 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 		}
 		logLevel = (logLevel == undefined) ? 0 : INNER.SEVERITY[logLevel];
 
-		if (silentMode == undefined) {
-			silentMode = false;
+		if (disableAlerts == undefined) {
+			INNER.disableAlerts = false;
 		}
 
 		var counter = {
@@ -111,9 +120,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 					INNER.writeLog(message, "INFO", logFile); 
 					counter.info++;
 					messages.info.push(message);
-					if (!silentMode) {
-						INNER.showAlert ("[INFO]\n" + message);
-					}
+					INNER.showAlert ("[INFO]\n" + message);
 				}
 			},
 			/**
@@ -136,9 +143,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 					INNER.writeLog(message, "WARN", logFile); 
 					counter.warn++;
 					messages.warn.push(message);
-					if (!silentMode) {
-						INNER.showAlert ("PROBLEM [WARN]\n" + message + "\n\nThere might be more information in the logfile:\n" + logFile);
-					}
+					INNER.showAlert ("PROBLEM [WARN]\n" + message + "\n\nThere might be more information in the logfile:\n" + logFile);
 				}
 			},
 			/**
@@ -198,8 +203,8 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
             * Set silent Mode
             * @message {Boolean} true will not show alerts!
             */
-            isSilent : function (mode) {
-                silentMode = mode;
+            disableAlerts : function (mode) {
+                INNER.disableAlerts = mode;
             },
 
             /**
