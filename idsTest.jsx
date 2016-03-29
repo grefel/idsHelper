@@ -19,6 +19,8 @@ $.global.hasOwnProperty('idsTesting') || (function(HOST, SELF) {
 	// PRIVATE  
 	// =================================  
 	var INNER = {};   
+	INNER.version = "2016-03-29--0.9"
+
 	INNER.testResults = [];
 	
 	INNER.consoleLog = true;
