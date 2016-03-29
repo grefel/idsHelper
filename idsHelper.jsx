@@ -4,8 +4,8 @@
  * {@link http://gisbert.wikisquare.de/indesignjs/} 
  *
  * @author Gregor Fellenz
- * @version 0.3
- * @date 10.10.2011
+ * @version 1.0
+ * @date 14.03.2016
  */
 /**   idsHelpler,jsx  ***************************************************************/
 {
