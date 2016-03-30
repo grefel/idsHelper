@@ -43,17 +43,14 @@ function test2() {
     log.clearLog();
 	idsTesting.assertStringNotInFile("String [test warn 1] is cleared", /test warn 1/, logFile);
 	
-    log.warnAlert("test warn new first");
-   
+    log.warnAlert("test warn new first");   
     log.warnAlert("test warn new second");
-	idsTesting.assertRegExInFile("String [test warn 2] is written", /test warn 2/, logFile);
+	idsTesting.assertRegExInFile("String [test warn new first] is written", /test warn new first/, logFile);
 	
 	idsTesting.assertEquals("Has 2 warnings", true, log.getCounters().warn == 2);	
 	
-	
-	
 //~     $.writeln("log.warnings: " + log.getWarnings());
-	log.disableAlerts(false);
+	log.disableAlerts(true);
  	log.showWarnings();
 //~     log.showLog();
 }
