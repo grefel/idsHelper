@@ -164,77 +164,80 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 				}
 			},
 
-
-            /**
-            * Shows all warnings
-            */
+			/**
+			* Shows all warnings
+			*/
 			showWarnings : function () {
 				INNER.showMessages("Es gab " + counter.warn + " Warnmeldungen", messages.warn);
 			},
-            /**
-            * Returns all warnings
-            */
+			/**
+			* Returns all warnings
+			*/
 			getWarnings : function () {
 				return messages.warn.join("\n");
 			},
-            /**
-            * Shows all infos
-            */
-            showInfos : function () {
-                INNER.showMessages("Es gab " + counter.info + " Infos", messages.info);
-            },
-            /**
-            * Returns all infos
-            */
-            getInfos : function () {
-                return messages.info.join("\n");
-            },
-            /**
-            * Shows all errors
-            */
-            showErrors : function () {
-                INNER.showMessages("Es gab " + counter.error + " Fehler", messages.error);
-            },
-            /**
-            * Returns all errors
-            */
-            getErrors : function () {
-                return messages.error.join("\n");
-            },
+			/**
+			* Shows all infos
+			*/
+			showInfos : function () {
+				INNER.showMessages("Es gab " + counter.info + " Infos", messages.info);
+			},
+			/**
+			* Returns all infos
+			*/
+			getInfos : function () {
+				return messages.info.join("\n");
+			},
+			/**
+			* Shows all errors
+			*/
+			showErrors : function () {
+				INNER.showMessages("Es gab " + counter.error + " Fehler", messages.error);
+			},
+			/**
+			* Returns all errors
+			*/
+			getErrors : function () {
+				return messages.error.join("\n");
+			},
+			/**
+			* Returns the counter Object
+			*/
+			getCounters : function () {
+				return counter;
+			},
 
 
+			/**
+			* Set silent Mode
+			* @message {Boolean} true will not show alerts!
+			*/
+			disableAlerts : function (mode) {
+				INNER.disableAlerts = mode;
+			},
 
+			/**
+			* Clear Logfile and counters
+			*/
+			clearLog : function () {                
+				logFile.open("w");
+				logFile.write("");
+				logFile.close();
+				counter.debug = 0;
+				counter.info = 0;
+				counter.warn = 0;
+				counter.error = 0;
+				messages.info = [];
+				messages.warn = [];
+				messages.error = [];
+			},
 
-            /**
-            * Set silent Mode
-            * @message {Boolean} true will not show alerts!
-            */
-            disableAlerts : function (mode) {
-                INNER.disableAlerts = mode;
-            },
-
-            /**
-            * Clear Logfile and counters
-            */
-            clearLog : function () {                
-                logFile.open("w");
-                logFile.write("");
-                logFile.close();
-                counter.debug = 0;
-                counter.info = 0;
-                counter.warn = 0;
-                counter.error = 0;
-                messages.info = [];
-                messages.warn = [];
-                messages.error = [];
-            },
-
-            /**
-            * Shows the log file in the system editor
-            */
-            showLog : function () {
-                logFile.execute();
-            }
+			/**
+			* Shows the log file in the system editor
+			*/
+			showLog : function () {
+				logFile.execute();
+			}
 		} 
 	};
 }) ( $.global, { toString : function() {return 'idsLog';} } );

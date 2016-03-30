@@ -47,6 +47,11 @@ function test2() {
    
     log.warnAlert("test warn 2");
 	idsTesting.assertRegExInFile("String [test warn 2] is written", /test warn 2/, logFile);
+	
+	idsTesting.assertEquals("Has 2 warnings", true, log.counter.warn);	
+	
+	
+	
 //~     $.writeln("log.warnings: " + log.getWarnings());
 	log.disableAlerts(false);
  	log.showWarnings();
