@@ -40,9 +40,15 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			alert(msg) 
 		}
 	};
-	INNER.showMessages = function(msg) { 
-		if (!INNER.disableAlerts) {
-			alert(msg) 
+	INNER.showMessages = function(title, msgArray) { 
+		if (!INNER.disableAlerts) {						
+			msg = msgArray.join("\n");			
+			var w = new Window ("dialog", title);
+			var list = w.add ("edittext", undefined, msg, {multiline: true, scrolling: true});
+			list.maximumSize.height = 300;
+			list.minimumSize.width = 400;
+			w.add ("button", undefined, "Ok", {name: "ok"});
+			w.show ();
 		}
 	};
 
@@ -143,7 +149,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 					INNER.writeLog(message, "WARN", logFile); 
 					counter.warn++;
 					messages.warn.push(message);
-					INNER.showAlert ("PROBLEM [WARN]\n" + message + "\n\nThere might be more information in the logfile:\n" + logFile);
+					INNER.showAlert ("[WARN]\n" + message + "\n\nPrüfen Sie auch das Logfile:\n" + logFile);
 				}
 			},
 			/**
@@ -163,7 +169,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
             * Shows all warnings
             */
 			showWarnings : function () {
-				INNER.showMessages("Es gab " + counter.warn + " Warnmeldungen\n\n" + messages.warn.join("\n"));
+				INNER.showMessages("Es gab " + counter.warn + " Warnmeldungen", messages.warn);
 			},
             /**
             * Returns all warnings
@@ -175,7 +181,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
             * Shows all infos
             */
             showInfos : function () {
-                INNER.showMessages("Es gab " + counter.info + " Infos\n\n" + messages.info.join("\n"));
+                INNER.showMessages("Es gab " + counter.info + " Infos", messages.info);
             },
             /**
             * Returns all infos
@@ -187,7 +193,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
             * Shows all errors
             */
             showErrors : function () {
-                INNER.showMessages("Es gab " + counter.error + " Warnmeldungen\n\n" + messages.error.join("\n"));
+                INNER.showMessages("Es gab " + counter.error + " Fehler", messages.error);
             },
             /**
             * Returns all errors

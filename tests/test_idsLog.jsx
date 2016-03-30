@@ -44,9 +44,12 @@ function test2() {
 	idsTesting.assertStringNotInFile("String [test warn 1] is cleared", /test warn 1/, logFile);
 	
     log.warnAlert("test warn 2");
+   
+    log.warnAlert("test warn 2");
 	idsTesting.assertRegExInFile("String [test warn 2] is written", /test warn 2/, logFile);
 //~     $.writeln("log.warnings: " + log.getWarnings());
-//~ 	log.showWarnings();
+	log.disableAlerts(false);
+ 	log.showWarnings();
 //~     log.showLog();
 }
 
