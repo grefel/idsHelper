@@ -96,6 +96,7 @@ var idsTools = idsTools || function () {
 		*/
 		showIt : function (_object) {
 			if (_object != null) {
+		        if (_object.hasOwnProperty ("source")) _object = _object.source;
 				if (_object.hasOwnProperty ("sourcePageItem")) _object = _object.sourcePageItem;
 				if (_object.hasOwnProperty ("sourceText")) _object = _object.sourceText;
 				var _spread = this.getSpreadByObject (_object);
