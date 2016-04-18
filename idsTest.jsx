@@ -78,6 +78,7 @@ $.global.hasOwnProperty('idsTesting') || (function(HOST, SELF) {
 		}
 	};
 	SELF.assertRegExInFile = function(message, regex, file) { 		        
+		message = message + " <a href='"+ file.fsName+ "'>" + file.name +"</a>";
 		var string = INNER.readTextFile(file);
 		if (!string.match(regex)) {
 			INNER.testResults.push({failed:true, message:message, result:"regex: " +regex });
@@ -88,6 +89,7 @@ $.global.hasOwnProperty('idsTesting') || (function(HOST, SELF) {
 		}
 	};
 	SELF.assertStringInFile = function(message, searchValue, file) { 		        
+		message = message + " <a href='"+ file.fsName+ "'>" + file.name +"</a>";
 		var string = INNER.readTextFile(file);
 		if (string.indexOf (searchValue) == -1) {
 			INNER.testResults.push({failed:true, message:message, result:"searchValue: " +searchValue });
@@ -98,6 +100,7 @@ $.global.hasOwnProperty('idsTesting') || (function(HOST, SELF) {
 		}
 	};
 	SELF.assertStringNotInFile = function(message, searchValue, file) { 		        
+		message = message + " <a href='"+ file.fsName+ "'>" + file.name +"</a>";
 		var string = INNER.readTextFile(file);
 		if (string.indexOf (searchValue) > -1) {
 			INNER.testResults.push({failed:true, message:message, result:"searchValue: " +searchValue });
