@@ -47,7 +47,7 @@ $.global.hasOwnProperty('idsTesting') || (function(HOST, SELF) {
 			} catch (e) {return e}
 		} 
 		else {
-			return Error ("This is not a File");
+			throw Error ("This is not a File");
 		}
 	}
 
