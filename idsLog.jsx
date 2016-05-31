@@ -82,6 +82,9 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 		if (disableAlerts == undefined) {
 			INNER.disableAlerts = false;
 		}
+		else {
+			INNER.disableAlerts = disableAlerts;
+		}
 
 		var counter = {
 			debug:0,
