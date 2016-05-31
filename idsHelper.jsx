@@ -7,7 +7,7 @@
  * @version 1.0
  * @date 14.03.2016
  */
-/**   idsHelpler,jsx  ***************************************************************/
+/**   idsHelpler.jsx  ***************************************************************/
 {
 /**
 * Helper and tools for common InDesign scripting tasks
