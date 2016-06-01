@@ -1,7 +1,6 @@
 #idsHelper
 Adobe InDesign Scripting Helper Utilities
 Originally developed for the book [InDesign automatisieren](http://www.indesignjs.de/auflage2/).
-The outdated (but still usable) english [documentation](http://www.indesignjs.de/idshelper/symbols/idsLog.html) will be merged into this file!
 
 ----
 Die Skripting-Bibliothek *idsHelper.jsx* enthält zwei Klassen und ein Logging-Framework, die hilfreiche Methoden für die Entwicklung von Skripten in Adobe InDesign zur Verfügung stellen.
