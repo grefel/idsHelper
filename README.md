@@ -12,7 +12,7 @@ idsTools.checkOverflow(app.activeDocument.stories[0]);
 ```
 Über `#include` können beliebige Skriptdateien eingebunden werden. Hier muss die Datei *idsHelper.jsx* im gleichen Verzeichnis wie die Skriptdatei liegen, es können auch relative Pfade angegeben werden.
 Die Bibliothek enthält die Klassen `idsTools` und `idsMap`. Über `idsTools` kann man wie in Zeile 2 auf die Methoden der Klasse zugreifen.
-Im Folgenden erkläre ich die wichtigsten Methoden der Bibliothek. Eine vollständige englische Dokumentation finden Sie unter http://indesignjs.de/idshelper.
+Im Folgenden erkläre ich die wichtigsten Methoden der Bibliothek.
 ####Methoden aus idsTools
 In der Klasse `idsTools` sind die Methoden aus Kapitel 11 und einige weitere Helferlein gesammelt.
 ######getPageByObject() und getSpreadByObject()
