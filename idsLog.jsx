@@ -28,17 +28,17 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 	INNER.SEVERITY["DEBUG"] = 0;
 
 	INNER.writeLog = function(msg, severity, file) { 
-		file.encoding = "UTF-8";
-		file.open("a");
 		var date = new Date();
 		var month = date.getMonth() + 1;
 		var day = date.getDate();
 		var hour = date.getHours();
 		var minute = date.getMinutes();
-		var second = date.getSeconds();
-		
+		var second = date.getSeconds();		
 		var dateString = (date.getYear() + 1900) + "-" + ((month < 10)  ? "0" : "") + month + "-" + ((day < 10)  ? "0" : "") + day + " " +  ((hour < 10)  ? "0" : "") + hour+ ":" +  ((minute < 10)  ? "0" : "") + minute+ ":" + ((second < 10)  ? "0" : "") + second;
 		var padString = (severity.length == 4) ? " " : ""
+		msg = msg.replace(/\r|\n/g, '<br/>');
+		file.encoding = "UTF-8";
+		file.open("a");
 		if (INNER.SEVERITY == 0) {
 			var stack = $.stack.split("\n");
 			stack = stack[stack.length - 4];		
@@ -49,6 +49,10 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 		file.close();
 	};
 	INNER.showAlert = function(msg){
+		if (!INNER.disableAlerts) {
+			alert(msg) 
+		}
+	};	INNER.showAlert = function(msg){
 		if (!INNER.disableAlerts) {
 			alert(msg) 
 		}
