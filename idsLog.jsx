@@ -38,7 +38,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 		var second = date.getSeconds();
 		
 		var dateString = (date.getYear() + 1900) + "-" + ((month < 10)  ? "0" : "") + month + "-" + ((day < 10)  ? "0" : "") + day + " " +  ((hour < 10)  ? "0" : "") + hour+ ":" +  ((minute < 10)  ? "0" : "") + minute+ ":" + ((second < 10)  ? "0" : "") + second;
-		var padString = (severity.length == 4) ? " [" : "["
+		var padString = (severity.length == 4) ? " " : ""
 		if (INNER.SEVERITY == 0) {
 			var stack = $.stack.split("\n");
 			stack = stack[stack.length - 4];		
