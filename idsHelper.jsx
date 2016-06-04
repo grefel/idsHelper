@@ -545,23 +545,28 @@ var idsTools = idsTools || function () {
 			}
 		},
 		/**
-		* Writes a String to a UTF-8 encoded File
+		* Writes a String to a File defaults to UTF-8 encoding
 		* @param {File} _file The File
-		* @param {String} _string The String to write
+		* @param {String} string The String to write
 		* @return {Bool} <b>true</b> everything worked fine, {Error} something went wrong
 		*/
-		writeTextFile : function (_file, _string) {
-			if (_file.constructor.name == "String") {
-				_file = new File(_file);
+		writeTextFile : function (file, string, encoding) {
+			if (encoding == undefined) {
+				encoding = "UTF-8";
 			}
-			if (_file.constructor.name == "File") {
+			if (file.constructor.name == "String") {
+				file = new File(file);
+			}
+			if (file.constructor.name == "File") {
 				try {
-					_file.encoding = "UTF-8";
-					_file.open( "w" );
-					_file.write (_string);
-					_file.close ();
+					file.encoding = encoding;
+					file.open( "w" );
+					file.write (string);
+					file.close ();
 					return true;
-				} catch (e) {return e}
+				} catch (e) {
+					return e;
+				}
 			} 
 			else {
 				return Error ("This is not a File");
