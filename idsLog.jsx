@@ -18,7 +18,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 	* PRIVATE
 	*/
 	var INNER = {};
-	INNER.version = "2016-03-30--0.91"
+	INNER.version = "2016-06-04-0.92"
 	INNER.disableAlerts = false;
 	INNER.SEVERITY = [];
 	INNER.SEVERITY["OFF"] = 4;
@@ -26,13 +26,20 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 	INNER.SEVERITY["WARN"] = 2;
 	INNER.SEVERITY["INFO"] = 1;
 	INNER.SEVERITY["DEBUG"] = 0;
+	INNER.pad = "";
 
 	INNER.writeLog = function(msg, severity, file) { 
 		file.encoding = "UTF-8";
 		file.open("a");
-		var stack = $.stack.split("\n");
-		stack = stack[stack.length - 4];		
-		file.writeln(Date() + " [" + severity + "] " + ((severity.length == 4) ? " [" : "[") + msg + "] Function: " + stack);		
+		var date = Date();
+		var dateString = date + "";
+		if (INNER.SEVERITY == 0) {
+			var stack = $.stack.split("\n");
+			stack = stack[stack.length - 4];		
+			file.writeln(dateString + " [" + severity + "] " + INNER.pad  + "[" + msg + "] Function: " + stack);		
+		} else {
+			file.writeln(dateString + " [" + severity + "] " + INNER.pad + "[" + msg + "]");					
+		}
 		file.close();
 	};
 	INNER.showAlert = function(msg){
@@ -72,20 +79,22 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 		if (! (logFile instanceof File)) {
 			throw Error("Cannot instantiate Log. Please provide a File");
 		}
-
-
 		if (logLevel == undefined) {
 			logLevel = "INFO";			
 		}
-		logLevel = (logLevel == undefined) ? 0 : INNER.SEVERITY[logLevel];
-
 		if (disableAlerts == undefined) {
 			INNER.disableAlerts = false;
 		}
-		else {
-			INNER.disableAlerts = disableAlerts;
-		}
 
+		logLevel = INNER.SEVERITY[logLevel];		
+		INNER.disableAlerts = disableAlerts;
+		if (logLevel == 0) {
+			INNER.pad = "";
+		}
+		else {
+			INNER.pad = " ";
+		}
+	
 		var counter = {
 			debug:0,
 			info:0,
