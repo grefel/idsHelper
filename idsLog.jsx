@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 0.91
-* @Date: 2016-03-30
+* @Version: 0.92
+* @Date: 2016-06-04
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
 
@@ -26,19 +26,25 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 	INNER.SEVERITY["WARN"] = 2;
 	INNER.SEVERITY["INFO"] = 1;
 	INNER.SEVERITY["DEBUG"] = 0;
-	INNER.pad = "";
 
 	INNER.writeLog = function(msg, severity, file) { 
 		file.encoding = "UTF-8";
 		file.open("a");
-		var date = Date();
-		var dateString = date + "";
+		var date = new Date();
+		var month = date.getMonth() + 1;
+		var day = date.getDate();
+		var hour = date.getHours();
+		var minute = date.getMinutes();
+		var second = date.getSeconds();
+		
+		var dateString = (date.getYear() + 1900) + "-" + ((month < 10)  ? "0" : "") + month + "-" + ((day < 10)  ? "0" : "") + day + " " +  ((hour < 10)  ? "0" : "") + hour+ ":" +  ((minute < 10)  ? "0" : "") + minute+ ":" + ((second < 10)  ? "0" : "") + second;
+		var padString = (severity.length == 4) ? " [" : "["
 		if (INNER.SEVERITY == 0) {
 			var stack = $.stack.split("\n");
 			stack = stack[stack.length - 4];		
-			file.writeln(dateString + " [" + severity + "] " + INNER.pad  + "[" + msg + "] Function: " + stack);		
+			file.writeln(dateString + " [" + severity + "] " +  padString + "[" + msg + "] Function: " + stack);		
 		} else {
-			file.writeln(dateString + " [" + severity + "] " + INNER.pad + "[" + msg + "]");					
+			file.writeln(dateString + " [" + severity + "] " + padString + "[" + msg + "]");					
 		}
 		file.close();
 	};
@@ -88,12 +94,6 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 
 		logLevel = INNER.SEVERITY[logLevel];		
 		INNER.disableAlerts = disableAlerts;
-		if (logLevel == 0) {
-			INNER.pad = "";
-		}
-		else {
-			INNER.pad = " ";
-		}
 	
 		var counter = {
 			debug:0,
