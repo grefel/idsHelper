@@ -52,10 +52,6 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 		if (!INNER.disableAlerts) {
 			alert(msg) 
 		}
-	};	INNER.showAlert = function(msg){
-		if (!INNER.disableAlerts) {
-			alert(msg) 
-		}
 	};
 	INNER.showMessages = function(title, msgArray) { 
 		if (!INNER.disableAlerts) {						
