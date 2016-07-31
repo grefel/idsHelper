@@ -205,7 +205,7 @@ var idsTools = idsTools || function () {
 				} 
 				else {
 					frame.fit(FitOptions.FRAME_TO_CONTENT);
-				}			
+				}
 			}
 		},
 		/** Scales a frame to a given height 
@@ -217,7 +217,7 @@ var idsTools = idsTools || function () {
 		scaleToHeight : function (frame, height, maxImageSize) {
 			if (maxImageSize == undefined) maxImageSize == false;			
 			var gb = frame.geometricBounds;
-			frame.geometricBounds = [gb[0], gb[1], gb[0] + width, gb[1] + width];
+			frame.geometricBounds = [gb[0], gb[1], gb[0] + height, gb[1] + height];
 			frame.fit(FitOptions.FILL_PROPORTIONALLY);
 			if (frame.graphics != undefined) {
 				var graphic = frame.graphics[0];
