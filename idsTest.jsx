@@ -77,6 +77,15 @@ $.global.hasOwnProperty('idsTesting') || (function(HOST, SELF) {
 			INNER.testResults.push({failed:false, message:message, result:"Expected: " +expected + " Actual: "+ actual });
 		}
 	};
+	SELF.assertRegEx = function(message, regex, actual) { 		        
+		if (!actual.match(regex)) {
+			INNER.testResults.push({failed:true, message:message, result:"regex: " +regex });
+			if (INNER.consoleLog) $.writeln("Test: " + message + "\nExpected: " +expected + "\nActual: "+ actual + "\n\n")			
+		}		
+		else {
+			INNER.testResults.push({failed:false, message:message, result:"regex: " +regex });
+		}
+	};
 	SELF.assertRegExInFile = function(message, regex, file) { 		        
 		message = message + " <a href='"+ file.fsName+ "'>" + file.name +"</a>";
 		var string = INNER.readTextFile(file);
