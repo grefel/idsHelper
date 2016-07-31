@@ -300,15 +300,17 @@ var idsTools = idsTools || function () {
 			}
 			var last_ip = null, next_ip = null, next_paragraph = null;
 			last_ip = (par.constructor.name == 'Paragraph') ? par.insertionPoints[-1] : par.paragraphs[-1].insertionPoints[-1];
+			if (last_ip == last_ip.parentStory.insertionPoints[-1]) {
+				return null;
+			}
 			next_ip = par.parent.insertionPoints.item(last_ip.index);
 			if (next_ip.isValid) {
 				return next_ip.paragraphs[0];
 			}
 			else {
-				return null;			
+				return null;	
 			}
 		},
-
 		/**
 		* Resolves the next Character object. Use this function instead of <code>nextItem()</code> 
 		* from the collection Characters as this method is much quicker with long Text objects.
