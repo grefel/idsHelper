@@ -89,7 +89,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			logLevel = "INFO";			
 		}
 		if (disableAlerts == undefined) {
-			INNER.disableAlerts = false;
+			disableAlerts = false;
 		}
 
 		logLevel = INNER.SEVERITY[logLevel];		

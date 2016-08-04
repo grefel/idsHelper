@@ -874,7 +874,6 @@ var idsTools = idsTools || function () {
 /**
 * Hashmap for JavaScript
 * @class <b>idsMap</b> implements a straightforward HashMap based on <a href="http://www.mojavelinux.com/articles/javascript_hashes.html">http://www.mojavelinux.com/articles/javascript_hashes.html</a> by Dan Allen.<br/><br/><code>#include "idsHelper.jsx"<br/>[...]<br/>var _map = idsMap();<br/>_map.pushItem ("key1", "value1");<br/>_map.getItem ("key1");</code>
- * @property {number} length The number of items in the map.
 */	 
 var idsMap = function () {
 	return { 
