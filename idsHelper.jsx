@@ -35,7 +35,19 @@ var idsTools = idsTools || function () {
 						case Footnote :; // drop through
 						case Cell : _object = _object.insertionPoints[0].parentTextFrames[0]; break;
 						case Note : _object = _object.storyOffset.parentTextFrames[0]; break;
-						case XMLElement : if (_object.insertionPoints[0] != null) { _object = _object.insertionPoints[0].parentTextFrames[0]; break; }
+						case XMLElement : 
+							if (_object.pageItems.length > 0) {									
+								_object = _object.pageItems[0];
+							}
+							else if (_object.insertionPoints[0] != null) {
+								if (_object.insertionPoints[0].parentTextFrames.length > 0) {
+									_object = _object.insertionPoints[0].parentTextFrames[0]; 
+								} 
+								else {
+									return null;
+								}
+							}
+							break; 
 						case Application : return null;
 						default: _object = _object.parent;
 					}
@@ -67,7 +79,19 @@ var idsTools = idsTools || function () {
 						case Footnote :; // drop through
 						case Cell : _object = _object.insertionPoints[0].parentTextFrames[0]; break;
 						case Note : _object = _object.storyOffset.parentTextFrames[0]; break;
-						case XMLElement : if (_object.insertionPoints[0] != null) { _object = _object.insertionPoints[0].parentTextFrames[0]; break; }
+						case XMLElement : 
+							if (_object.pageItems.length > 0) {									
+								_object = _object.pageItems[0];
+							}
+							else if (_object.insertionPoints[0] != null) {
+								if (_object.insertionPoints[0].parentTextFrames.length > 0) {
+									_object = _object.insertionPoints[0].parentTextFrames[0]; 
+								} 
+								else {
+									return null;
+								}
+							}
+							break; 
 						case Application : return null;
 						default: _object = _object.parent;
 					}
