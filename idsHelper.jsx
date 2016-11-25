@@ -499,11 +499,7 @@ var idsTools = idsTools || function () {
 				if (!file || !file.exists) {
 					return null;
 				}
-			}
-			else {
-				return null;
-			}
-		
+			}		
 			return file;
 		},
 		/**
