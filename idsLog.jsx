@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 0.92
-* @Date: 2016-06-04
+* @Version: 0.94
+* @Date: 2017-01-23
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
 
@@ -18,7 +18,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 	* PRIVATE
 	*/
 	var INNER = {};
-	INNER.version = "2016-06-04-0.92"
+	INNER.version = "2016-10-24-0.93"
 	INNER.disableAlerts = false;
 	INNER.SEVERITY = [];
 	INNER.SEVERITY["OFF"] = 4;
@@ -28,6 +28,15 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 	INNER.SEVERITY["DEBUG"] = 0;
 
 	INNER.writeLog = function(msg, severity, file) { 
+		if (msg == undefined) {
+			msg = ""; // return ?
+		}
+		if (( msg instanceof Error) ) {
+			msg =  msg + " -> " + msg.line
+		}
+		if (! ( msg instanceof String) ) {
+			msg.toString();
+		}	
 		var date = new Date();
 		var month = date.getMonth() + 1;
 		var day = date.getDate();
@@ -108,6 +117,19 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 		}
 
 		return {
+			/**
+			* Writes a debug log message
+			* @message {String} message Message to log.
+			*/
+			writeln : function (message) {
+				if (px && px.hasOwnProperty ("debug") && px.debug) {
+					$.writeln(message);
+				}
+				if (logLevel <= 0) {
+					INNER.writeLog(message, "DEBUG", logFile);
+					counter.debug++;
+				}
+			},			
 			/**
 			* Writes a debug log message
 			* @message {String} message Message to log.
