@@ -396,31 +396,46 @@ var idsTools = idsTools || function () {
 
 
 		/**
-		* Fits an two or more column TextFrame.
-		* @param {Story} _tf The TextFrame
-		* @param {Number} [_step] The step size in current MeasurementUnits, defaults to 1
-		* @return {Bool} <b>true</b> everything worked fine, <b>false</b> cannot fit the TextFrame - too big?
-		*/
-		fitTextFrame : function (_tf, _step) {
-			try {
-				if (_step == undefined) _step = 1
-				while (_tf.overflows) {
-					var _bounds = _tf.geometricBounds;
-					_tf.geometricBounds = [_bounds[0],_bounds[1],_bounds[2] + _step,_bounds[3]];
-				}
-			} catch (e) {
-				return false;		
-			}
-			return true;
-		},
+		* Fits a textframe height to its content - use this function if tf.fit(FitOptions.FRAME_TO_CONTENT); does not work
+		* Based on Marc Autrets algorithm http://www.indiscripts.com/post/2011/03/indesign-scripting-forum-25-sticky-posts#hd2sb2
+		* @param {TextFrame} tf The TextFrame to fit
+		* @param {Number} [precision] The precision, defaults to 0.1
+		* @param {String} [xRef] Reference point  'left'(default) | 'right' | 'center'*/
+		fitTextFrame : function (/*TextFrame*/ tf, /*Number*/ precision, /*String*/xRef) {
+			precision = (precision || .1);
+			xRef = AnchorPoint['TOP_' + (xRef||'left').toUpperCase() + '_ANCHOR'];
 
-		
+			// Default width multiplier. This value is only used if tf overflows in its initial state. 1.5 is fine, usually.
+			var Y_FACTOR = 1.5;
+
+			var ovf = tf.overflows, dx;
+		  
+			// If tf originally overflows, we need to add height
+			while ( tf.overflows ) {
+				tf.resize(CoordinateSpaces.INNER_COORDINATES,xRef, ResizeMethods.MULTIPLYING_CURRENT_DIMENSIONS_BY ,[1,Y_FACTOR]);
+			}
+
+			// Now, let's compute the maximal height variation (dx)
+			dx = tf.resolve(AnchorPoint.BOTTOM_LEFT_ANCHOR, CoordinateSpaces.INNER_COORDINATES)[0][1] - tf.resolve(AnchorPoint.TOP_LEFT_ANCHOR, CoordinateSpaces.INNER_COORDINATES)[0][1];
+			if ( ovf ) dx *= (1-1/Y_FACTOR);
+		 
+			// Dichotomy on dx
+			while( dx > precision ) {
+				dx*=.5;
+				tf.resize(CoordinateSpaces.INNER_COORDINATES,xRef, ResizeMethods.ADDING_CURRENT_DIMENSIONS_TO, [0, dx*(tf.overflows?1:-1)]);
+			}
+		 
+			// Last step, if needed
+			if( tf.overflows ) {
+				tf.resize(CoordinateSpaces.INNER_COORDINATES,xRef, ResizeMethods.ADDING_CURRENT_DIMENSIONS_TO,[0, dx]);
+			}
+		},	 
+	
 		/**
-		* Removes all TextFrame but first from a Story.
+		* Removes all TextFrame but the first from a Story.
 		* @param {Story} The Story
 		* @return {Story} The story
 		*/
-		
 		removeContainerFromStory : function (story) {
 			while (story.textContainers.length > 1) {
 				story.textContainers[story.textContainers.length -1].remove();
@@ -784,6 +799,27 @@ var idsTools = idsTools || function () {
 					return cleanName;
 				}
 			}
+		},
+		/**
+		* Calculate the leading, considers auto leading
+		* @param {Text} Text Object
+		* @return {Numer} leading in Point 
+		*/
+		getLeading : function (text) {
+			var lineheight = 0;
+			var lead = 0;
+
+			if (text.leading == Leading.AUTO) {
+				if (text.autoLeading !== 0) {
+					lead = text.autoLeading / 100.0;
+					lineheight = (text.pointSize * lead);
+				}
+			} 
+			else if (text.leading !== 0) {
+				lineheight = text.leading;
+			}
+
+			return lineheight;
 		},
 
 		/**
