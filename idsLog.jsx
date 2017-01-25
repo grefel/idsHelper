@@ -35,7 +35,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 		if (( msg instanceof Error) ) {
 			msg =  msg + " -> " + msg.line
 		}
-		if (! ( msg instanceof String) ) {
+		if (msg.constructor.name != String) {
 			msg.toString();
 		}	
 		var date = new Date();
