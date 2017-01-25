@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 0.94
-* @Date: 2017-01-23
+* @Version: 0.95
+* @Date: 2017-01-24
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
 
@@ -18,8 +18,9 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 	* PRIVATE
 	*/
 	var INNER = {};
-	INNER.version = "2016-10-24-0.93"
+	INNER.version = "2017-01-24-0.93"
 	INNER.disableAlerts = false;
+	INNER.logLevel = 0;
 	INNER.SEVERITY = [];
 	INNER.SEVERITY["OFF"] = 4;
 	INNER.SEVERITY["ERROR"] = 3;
@@ -48,7 +49,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 		msg = msg.replace(/\r|\n/g, '<br/>');
 		file.encoding = "UTF-8";
 		file.open("a");
-		if (INNER.SEVERITY == 0) {
+		if (INNER.logLevel == 0) {
 			var stack = $.stack.split("\n");
 			stack = stack[stack.length - 4];		
 			file.writeln(dateString + " [" + severity + "] " +  padString + "[" + msg + "] Function: " + stack);		
@@ -101,7 +102,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			disableAlerts = false;
 		}
 
-		logLevel = INNER.SEVERITY[logLevel];		
+		INNER.logLevel = INNER.SEVERITY[logLevel];
 		INNER.disableAlerts = disableAlerts;
 	
 		var counter = {
@@ -125,7 +126,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 				if (px && px.hasOwnProperty ("debug") && px.debug) {
 					$.writeln(message);
 				}
-				if (logLevel <= 0) {
+				if (INNER.logLevel == 0) {
 					INNER.writeLog(message, "DEBUG", logFile);
 					counter.debug++;
 				}
@@ -135,7 +136,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			* @message {String} message Message to log.
 			*/
 			debug : function (message) {
-				if (logLevel <= 0) {
+				if (INNER.logLevel == 0) {
 					INNER.writeLog(message, "DEBUG", logFile);
 					counter.debug++;
 				}
@@ -145,7 +146,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			* @message {String} message Message to log.
 			*/
 			info : function (message) {
-				if (logLevel <= 1) {
+				if (INNER.logLevel <= 1) {
 					INNER.writeLog(message, "INFO", logFile); 
 					counter.info++;
 					messages.info.push(message);
@@ -156,7 +157,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			* @message {String} message Message to log.
 			*/
 			infoAlert : function (message) {
-				if (logLevel <= 2) {
+				if (INNER.logLevel <= 2) {
 					INNER.writeLog(message, "INFO", logFile); 
 					counter.info++;
 					messages.info.push(message);
@@ -168,7 +169,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			* @message {String} message Message to log.
 			*/
 			warn : function (message) {
-				if (logLevel <= 2) {
+				if (INNER.logLevel <= 2) {
 					INNER.writeLog(message, "WARN", logFile);
 					counter.warn++;
 					messages.warn.push(message);
@@ -179,7 +180,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			* @message {String} message Message to log.
 			*/
 			warnAlert : function (message) {
-				if (logLevel <= 2) {
+				if (INNER.logLevel <= 2) {
 					INNER.writeLog(message, "WARN", logFile); 
 					counter.warn++;
 					messages.warn.push(message);
@@ -191,7 +192,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			* @message {String} message Message to log.
 			*/
 			error : function (message) {
-				if (logLevel <= 3) {
+				if (INNER.logLevel <= 3) {
 					INNER.writeLog(message, "ERROR", logFile); 
 					counter.error++;
 					messages.error.push(message);
