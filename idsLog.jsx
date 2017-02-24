@@ -92,6 +92,9 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			dialogWin.gControl.btSave.onClick = function () {
 				var texFile = File.openDialog();
 				if (texFile) {
+					if (! texFile.name.match (/\.txt$/)) {
+						texFile = File(texFile.fullName + ".txt");
+					}
 					texFile.encoding = "UTF-8";
 					texFile.open("e");
 					texFile.writeln(msg);					
