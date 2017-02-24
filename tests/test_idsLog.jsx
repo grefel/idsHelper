@@ -56,6 +56,7 @@ function test2() {
 	
 //~     $.writeln("log.warnings: " + log.getWarnings());
 	log.disableAlerts(false);
+
  	log.showWarnings();
 //~     log.showLog();
 }

@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 0.95
-* @Date: 2017-01-24
+* @Version: 0.96
+* @Date: 2017-02-24
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
 
@@ -18,7 +18,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 	* PRIVATE
 	*/
 	var INNER = {};
-	INNER.version = "2017-01-24-0.93"
+	INNER.version = "2017-02-24-0.96"
 	INNER.disableAlerts = false;
 	INNER.logLevel = 0;
 	INNER.SEVERITY = [];
@@ -52,26 +52,57 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 		if (INNER.logLevel == 0) {
 			var stack = $.stack.split("\n");
 			stack = stack[stack.length - 4];		
-			file.writeln(dateString + " [" + severity + "] " +  padString + "[" + msg + "] Function: " + stack);		
+			file.writeln(dateString + " [" + severity + "] " +  padString + "[" + msg + "] Function: " + stack.substr (0, 100));		
 		} else {
 			file.writeln(dateString + " [" + severity + "] " + padString + "[" + msg + "]");					
 		}
 		file.close();
 	};
-	INNER.showAlert = function(msg){
+	INNER.showAlert = function(title, msg){
 		if (!INNER.disableAlerts) {
-			alert(msg) 
+			if (msg.length < 300) {
+				alert(msg, title) 
+			}
+			else {
+				INNER.showMessages(title, [msg]);
+			}
 		}
 	};
 	INNER.showMessages = function(title, msgArray) { 
-		if (!INNER.disableAlerts) {						
-			msg = msgArray.join("\n");			
-			var w = new Window ("dialog", title);
-			var list = w.add ("edittext", undefined, msg, {multiline: true, scrolling: true});
-			list.maximumSize.height = 300;
-			list.minimumSize.width = 400;
-			w.add ("button", undefined, "Ok", {name: "ok"});
-			w.show ();
+		if (!INNER.disableAlerts) {
+			var callingScriptVersion = "    ";
+			if ($.global.hasOwnProperty ("px") && $.global.px.hasOwnProperty ("projectName")  ){
+				callingScriptVersion += px.projectName;
+			} 
+			if ($.global.hasOwnProperty ("px") && $.global.px.hasOwnProperty ("version")  ){
+				callingScriptVersion += " v" + px.version;
+			} 
+			var msg = msgArray.join("\n");
+			var dialogWin = new Window ("dialog", title + callingScriptVersion);
+			dialogWin.etMsg = dialogWin.add ("edittext", undefined, msg, {multiline: true, scrolling: true});
+			dialogWin.etMsg.maximumSize.height = 300;
+			dialogWin.etMsg.minimumSize.width = 400;
+						
+			dialogWin.gControl = dialogWin.add("group");
+			dialogWin.gControl.preferredSize.width = 400;
+			dialogWin.gControl.alignChildren = ['right', 'center'];
+			dialogWin.gControl.margins = 0;								
+			dialogWin.gControl.btSave = null;
+			dialogWin.gControl.btSave = dialogWin.gControl.add ("button", undefined, "Save");
+			dialogWin.gControl.btSave.onClick = function () {
+				var texFile = File.openDialog();
+				if (texFile) {
+					texFile.encoding = "UTF-8";
+					texFile.open("e");
+					texFile.writeln(msg);					
+					texFile.close();
+					dialogWin.close();
+				}
+			}
+			dialogWin.gControl.add ("button", undefined, "Ok", {name: "ok"});
+			
+			dialogWin.show ();			
+			
 		}
 	};
 
@@ -161,7 +192,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 					INNER.writeLog(message, "INFO", logFile); 
 					counter.info++;
 					messages.info.push(message);
-					INNER.showAlert ("[INFO]\n" + message);
+					INNER.showAlert ("[INFO]", message);
 				}
 			},
 			/**
@@ -184,7 +215,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 					INNER.writeLog(message, "WARN", logFile); 
 					counter.warn++;
 					messages.warn.push(message);
-					INNER.showAlert ("[WARN]\n" + message + "\n\nPrüfen Sie auch das Logfile:\n" + logFile);
+					INNER.showAlert ("[WARN]", message + "\n\nPrüfen Sie auch das Logfile:\n" + logFile);
 				}
 			},
 			/**
