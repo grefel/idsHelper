@@ -5,6 +5,11 @@
 // Tests for idsLog.jsx 
 var logFile =  File ("~/Desktop/testLog.txt");
 
+px = {
+	projectName:"fuic",
+	version:"asdfasdf"
+}
+
 main();
 test();
 
@@ -50,7 +55,7 @@ function test2() {
 	idsTesting.assertEquals("Has 2 warnings", true, log.getCounters().warn == 2);	
 	
 //~     $.writeln("log.warnings: " + log.getWarnings());
-	log.disableAlerts(true);
+	log.disableAlerts(false);
  	log.showWarnings();
 //~     log.showLog();
 }
