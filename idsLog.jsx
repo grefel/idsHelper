@@ -88,7 +88,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			dialogWin.gControl.alignChildren = ['right', 'center'];
 			dialogWin.gControl.margins = 0;								
 			dialogWin.gControl.btSave = null;
-			dialogWin.gControl.btSave = dialogWin.gControl.add ("button", undefined, "Save");
+			dialogWin.gControl.btSave = dialogWin.gControl.add ("button", undefined, localize({en:"Save",de:"Speichern"}));
 			dialogWin.gControl.btSave.onClick = function () {
 				var texFile = File.openDialog();
 				if (texFile) {
