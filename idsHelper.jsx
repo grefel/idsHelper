@@ -4,8 +4,8 @@
  * {@link http://gisbert.wikisquare.de/indesignjs/} 
  *
  * @author Gregor Fellenz
- * @version 1.0
- * @date 14.03.2016
+ * @version 1.1
+ * @date 2017-02-27
  */
 /**   idsHelpler.jsx  ***************************************************************/
 {
@@ -103,7 +103,22 @@ var idsTools = idsTools || function () {
 				return null;
 			}
 		},
-
+		/**
+		* Returns the <b>Page name or Spread Index</b> which contains the Object
+		* @param {Object} _object PageItem, Text or Object
+		* @return the <b>Page name or Spread Index</b> which contains the Object as String
+		*/
+		getPageNameByObject : function (_object) {
+			var page = this.getPageByObject(_object);
+			if (page) {
+				return page.name;
+			}
+			var spread = this.getSpreadByObject(_object);
+			if (spread) {
+				return localize({en:"Spread", de:"Montagefläche"}) + " " +  (spread.index+1);
+			}			
+			return localize({en:"Overset Text", de:"Text im Übersatz"});
+		},
 		/**
 		* Ungroup recursively 
 		* @param {Object} _object Document, Layer, Page or Group... 
