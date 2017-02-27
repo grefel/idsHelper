@@ -36,7 +36,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			msg =  msg + " -> " + msg.line
 		}
 		if (msg.constructor.name != String) {
-			msg.toString();
+			msg = msg.toString();
 		}	
 		var date = new Date();
 		var month = date.getMonth() + 1;
