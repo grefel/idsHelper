@@ -626,31 +626,24 @@ var idsTools = idsTools || function () {
 		},
 		/**
 		* Returns a File-Filter for a File-Dialog
-		* @param {String} _ext The File Extension
-		* @param {String} _string The Information Text 
+		* @param {String} ext The File Extension
+		* @param {String} type The Information Text 
 		* @return {String|Function} The Filter String for Windows, the Filter Function for MacOS
 		*/
-		getFileFilter : function (_ext, _string) {
+		getFileFilter : function (ext, type) {
+			ext =ext.replace(/\*/g, "");
 			if (File.fs == "Windows") {
-				_ext =_ext.replace(/\*/g, "");
-				_string =_string.replace(/:/g, "");
-				var _filter = _string + ":*"+ _ext;
+				type =type.replace(/:/g, "");
+				return type + ":*"+ ext;
 			} 
 			else {
-				function _filterFilesMac(file) {
-					while (file.alias) {
-						file = file.resolve();
-						if (file == null) { return false }
-					}
-					if (file.constructor.name == "Folder") return true;
-					var _extension = file.name.toLowerCase().slice(file.name.lastIndexOf("."));
-					if (_extension.indexOf (_ext) > -1 ) return true;
-					else return false
+				return function fileFilter (file) {
+					 return (file.constructor.name === "Folder") ||  
+					   (file.name.slice(-4) === ext) ||  
+					   (file.alias);  
 				}
-				var _filter = _filterFilesMac;
 			} 
-			return _filter;
-		},
+		}
 		/**
 		* Loads XMP Library 
 		* @return {Boolean} Result
