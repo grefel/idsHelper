@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 0.96
-* @Date: 2017-02-24
+* @Version: 0.98
+* @Date: 2017-03-06
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
 
@@ -18,7 +18,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 	* PRIVATE
 	*/
 	var INNER = {};
-	INNER.version = "2017-02-24-0.96"
+	INNER.version = "2017-02-27-0.97"
 	INNER.disableAlerts = false;
 	INNER.logLevel = 0;
 	INNER.SEVERITY = [];
@@ -69,7 +69,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 		}
 	};
 	INNER.showMessages = function(title, msgArray) { 
-		if (!INNER.disableAlerts) {
+		if (!INNER.disableAlerts && msgArray.length > 0) {
 			var callingScriptVersion = "    ";
 			if ($.global.hasOwnProperty ("px") && $.global.px.hasOwnProperty ("projectName")  ){
 				callingScriptVersion += px.projectName;
@@ -90,7 +90,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			dialogWin.gControl.btSave = null;
 			dialogWin.gControl.btSave = dialogWin.gControl.add ("button", undefined, localize({en:"Save",de:"Speichern"}));
 			dialogWin.gControl.btSave.onClick = function () {
-				var texFile = File.openDialog();
+				var texFile = File.saveDialog(localize({en:"Save information in text file ",de:"Speichern der Informationen in einer Textdatei"}), INNER.getFileFilter (".txt", localize({en:"Textfile ",de:"Textdatei"}))  );
 				if (texFile) {
 					if (! texFile.name.match (/\.txt$/)) {
 						texFile = File(texFile.fullName + ".txt");
@@ -108,6 +108,21 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			
 		}
 	};
+	INNER.getFileFilter = function (ext, type) {
+		ext =ext.replace(/\*/g, "");
+		if (File.fs == "Windows") {
+			type =type.replace(/:/g, "");
+			return type + ":*"+ ext;
+		} 
+		else {
+			return function fileFilter (file) {
+				 return (file.constructor.name === "Folder") ||  
+				   (file.name.slice(-4) === ext) ||  
+				   (file.alias);  
+			}
+		} 
+	};
+
 
     /****************
     * API 
