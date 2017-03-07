@@ -1,7 +1,7 @@
 ﻿/****************
 * Testing Framework for Unit Testing
-* @Version: 0.9
-* @Date: 2016-03-29
+* @Version: 0.91
+* @Date: 2016-03-07
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
 
@@ -87,7 +87,7 @@ $.global.hasOwnProperty('idsTesting') || (function(HOST, SELF) {
 		}
 	};
 	SELF.assertRegExInFile = function(message, regex, file) { 		        
-		message = message + " <a href='"+ file.fsName+ "'>" + file.name +"</a>";
+		message = message + " <a href='file:///"+ file.fsName+ "'>" + file.name +"</a>";
 		var string = INNER.readTextFile(file);
 		if (!string.match(regex)) {
 			INNER.testResults.push({failed:true, message:message, result:"regex: " +regex });
@@ -97,8 +97,19 @@ $.global.hasOwnProperty('idsTesting') || (function(HOST, SELF) {
 			INNER.testResults.push({failed:false, message:message, result:"regex: " +regex });
 		}
 	};
-	SELF.assertStringInFile = function(message, searchValue, file) { 		        
-		message = message + " <a href='"+ file.fsName+ "'>" + file.name +"</a>";
+	SELF.assertRegExNotInFile = function(message, regex, file) { 		        
+		message = message + " <a href='file:///"+ file.fsName+ "'>" + file.name +"</a>";
+		var string = INNER.readTextFile(file);
+		if (string.match(regex)) {
+			INNER.testResults.push({failed:true, message:message, result:"regex: " +regex });
+			if (INNER.consoleLog) $.writeln("Test: " + message + "\nExpected: " +expected + "\nActual: "+ actual + "\n\n")			
+		}		
+		else {
+			INNER.testResults.push({failed:false, message:message, result:"regex: " +regex });
+		}
+	};
+	SELF.assertStringInFile = function(message, searchValue, file) {
+		message = message + " <a href='file:///"+ file.fsName+ "'>" + file.name +"</a>";
 		var string = INNER.readTextFile(file);
 		if (string.indexOf (searchValue) == -1) {
 			INNER.testResults.push({failed:true, message:message, result:"searchValue: " +searchValue });
@@ -109,7 +120,7 @@ $.global.hasOwnProperty('idsTesting') || (function(HOST, SELF) {
 		}
 	};
 	SELF.assertStringNotInFile = function(message, searchValue, file) { 		        
-		message = message + " <a href='"+ file.fsName+ "'>" + file.name +"</a>";
+		message = message + " <a href='file:///"+ file.fsName+ "'>" + file.name +"</a>";
 		var string = INNER.readTextFile(file);
 		if (string.indexOf (searchValue) > -1) {
 			INNER.testResults.push({failed:true, message:message, result:"searchValue: " +searchValue });
@@ -119,6 +130,22 @@ $.global.hasOwnProperty('idsTesting') || (function(HOST, SELF) {
 			INNER.testResults.push({failed:false, message:message, result:"searchValue: " +searchValue });
 		}
 	};
+
+	SELF.assertGREPInDoc = function(message, GREP, doc) { 		        
+		message = message + " GREP in " + doc.name ;
+		app.findGrepPreferences = NothingEnum.NOTHING;
+		app.findGrepPreferences.findWhat = GREP;
+		var results = doc.findGrep();
+		
+		if (results == 0) {
+			INNER.testResults.push({failed:true, message:message, result:"GREP: " +GREP });
+			if (INNER.consoleLog) $.writeln("Test: " + message + "\nExpected: " +expected + "\nActual: "+ actual + "\n\n")			
+		}		
+		else {
+			INNER.testResults.push({failed:false, message:message, result:"GREP: " +GREP  + " with " + results.length + " hits."});
+		}
+	};
+
 	SELF.insertBlock = function (message) {
 		INNER.testResults.push({failed:"block", message:message});
 	}
