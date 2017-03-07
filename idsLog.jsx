@@ -1,6 +1,6 @@
 ﻿/****************
 * Logging Class 
-* @Version: 0.98
+* @Version: 0.99
 * @Date: 2017-03-06
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
@@ -58,17 +58,17 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 		}
 		file.close();
 	};
-	INNER.showAlert = function(title, msg){
+	INNER.showAlert = function(title, msg, type){
 		if (!INNER.disableAlerts) {
 			if (msg.length < 300) {
 				alert(msg, title) 
 			}
 			else {
-				INNER.showMessages(title, [msg]);
+				INNER.showMessages(title, [msg], type);
 			}
 		}
 	};
-	INNER.showMessages = function(title, msgArray) { 
+	INNER.showMessages = function(title, msgArray, type) { 
 		if (!INNER.disableAlerts && msgArray.length > 0) {
 			var callingScriptVersion = "    ";
 			if ($.global.hasOwnProperty ("px") && $.global.px.hasOwnProperty ("projectName")  ){
@@ -81,14 +81,14 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			var dialogWin = new Window ("dialog", title + callingScriptVersion);
 			dialogWin.etMsg = dialogWin.add ("edittext", undefined, msg, {multiline: true, scrolling: true});
 			dialogWin.etMsg.maximumSize.height = 300;
-			dialogWin.etMsg.minimumSize.width = 400;
+			dialogWin.etMsg.minimumSize.width = 500;
 						
 			dialogWin.gControl = dialogWin.add("group");
-			dialogWin.gControl.preferredSize.width = 400;
+			dialogWin.gControl.preferredSize.width = 500;
 			dialogWin.gControl.alignChildren = ['right', 'center'];
 			dialogWin.gControl.margins = 0;								
 			dialogWin.gControl.btSave = null;
-			dialogWin.gControl.btSave = dialogWin.gControl.add ("button", undefined, localize({en:"Save",de:"Speichern"}));
+			dialogWin.gControl.btSave = dialogWin.gControl.add ("button", undefined, localize({en:"Save",de:"Speichern"}) + " " + type);
 			dialogWin.gControl.btSave.onClick = function () {
 				var texFile = File.saveDialog(localize({en:"Save information in text file ",de:"Speichern der Informationen in einer Textdatei"}), INNER.getFileFilter (".txt", localize({en:"Textfile ",de:"Textdatei"}))  );
 				if (texFile) {
@@ -103,11 +103,48 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 				}
 			}
 			dialogWin.gControl.add ("button", undefined, "Ok", {name: "ok"});
-			
-			dialogWin.show ();			
-			
+			dialogWin.show();
 		}
 	};
+	INNER.confirmMessages = function(title, msgArray, type) { 
+		if (!INNER.disableAlerts && msgArray.length > 0) {
+			var callingScriptVersion = "    ";
+			if ($.global.hasOwnProperty ("px") && $.global.px.hasOwnProperty ("projectName")  ){
+				callingScriptVersion += px.projectName;
+			} 
+			if ($.global.hasOwnProperty ("px") && $.global.px.hasOwnProperty ("version")  ){
+				callingScriptVersion += " v" + px.version;
+			} 
+			var msg = msgArray.join("\n");
+			var dialogWin = new Window ("dialog", title + callingScriptVersion);
+			dialogWin.etMsg = dialogWin.add ("edittext", undefined, msg, {multiline: true, scrolling: true});
+			dialogWin.etMsg.maximumSize.height = 300;
+			dialogWin.etMsg.minimumSize.width = 500;
+						
+			dialogWin.gControl = dialogWin.add("group");
+			dialogWin.gControl.preferredSize.width = 500;
+			dialogWin.gControl.alignChildren = ['right', 'center'];
+			dialogWin.gControl.margins = 0;								
+			dialogWin.gControl.btSave = null;
+			dialogWin.gControl.btSave = dialogWin.gControl.add ("button", undefined, localize({en:"Save",de:"Speichern"}) + " " + type);
+			dialogWin.gControl.btSave.onClick = function () {
+				var texFile = File.saveDialog(localize({en:"Save information in text file ",de:"Speichern der Informationen in einer Textdatei"}), INNER.getFileFilter (".txt", localize({en:"Textfile ",de:"Textdatei"}))  );
+				if (texFile) {
+					if (! texFile.name.match (/\.txt$/)) {
+						texFile = File(texFile.fullName + ".txt");
+					}
+					texFile.encoding = "UTF-8";
+					texFile.open("e");
+					texFile.writeln(msg);					
+					texFile.close();
+				}
+			}
+			dialogWin.gControl.add ("button", undefined, localize({en:"Cancel script",de:"Skript Abbrechen"}), {name: "cancel"});
+			dialogWin.gControl.add ("button", undefined, "Ok", {name: "ok"});
+			return dialogWin.show();
+		}
+	};
+
 	INNER.getFileFilter = function (ext, type) {
 		ext =ext.replace(/\*/g, "");
 		if (File.fs == "Windows") {
@@ -210,7 +247,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 					INNER.writeLog(message, "INFO", logFile); 
 					counter.info++;
 					messages.info.push(message);
-					INNER.showAlert ("[INFO]", message);
+					INNER.showAlert ("[INFO]", message, localize({en:"informations", de:" der Informationen"}));
 				}
 			},
 			/**
@@ -233,7 +270,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 					INNER.writeLog(message, "WARN", logFile); 
 					counter.warn++;
 					messages.warn.push(message);
-					INNER.showAlert ("[WARN]", message + "\n\nPrüfen Sie auch das Logfile:\n" + logFile);
+					INNER.showAlert ("[WARN]", message + "\n\nPrüfen Sie auch das Logfile:\n" + logFile, localize({en:"warnings", de:"der Warnungen"}));
 				}
 			},
 			/**
@@ -252,8 +289,15 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			* Shows all warnings
 			*/
 			showWarnings : function () {
-				INNER.showMessages("Es gab " + counter.warn + " Warnmeldungen", messages.warn);
+				INNER.showMessages("Es gab " + counter.warn + " Warnmeldungen", messages.warn, localize({en:"warnings", de:"der Warnungen"}));
 			},
+			/**
+			* Confirm all warnings
+			*/
+			confirmWarnings : function () {
+				return INNER.confirmMessages("Es gab " + counter.warn + " Warnmeldungen", messages.warn, localize({en:"warnings", de:"der Warnungen"}));
+			},
+		
 			/**
 			* Returns all warnings
 			*/
@@ -264,7 +308,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			* Shows all infos
 			*/
 			showInfos : function () {
-				INNER.showMessages("Es gab " + counter.info + " Infos", messages.info);
+				INNER.showMessages("Es gab " + counter.info + " Infos", messages.info, localize({en:"informations", de:" der Informationen"}));
 			},
 			/**
 			* Returns all infos
@@ -276,7 +320,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			* Shows all errors
 			*/
 			showErrors : function () {
-				INNER.showMessages("Es gab " + counter.error + " Fehler", messages.error);
+				INNER.showMessages("Es gab " + counter.error + " Fehler", messages.error, localize({en:"errors", de:"der Fehler"}));
 			},
 			/**
 			* Returns all errors
