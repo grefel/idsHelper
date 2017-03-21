@@ -145,6 +145,10 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 		}
 	};
 
+	INNER.confirm = function (message, noAsDefault, title) {
+		return confirm(message, noAsDefault, title);
+	} 
+
 	INNER.getFileFilter = function (ext, type) {
 		ext =ext.replace(/\*/g, "");
 		if (File.fs == "Windows") {
@@ -295,8 +299,25 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			* Confirm all warnings
 			*/
 			confirmWarnings : function () {
-				return INNER.confirmMessages("Es gab " + counter.warn + " Warnmeldungen", messages.warn, localize({en:"warnings", de:"der Warnungen"}));
+				var message = "confirmWarnings: Es gab " + counter.warn + " Warnmeldungen"
+				INNER.writeLog(message, "INFO", logFile); 
+
+				var res = INNER.confirmMessages(message, messages.warn, localize({en:"warnings", de:"der Warnungen"}));
+				INNER.writeLog("User interaction: " + res, "INFO", logFile); 
+				return res;				
 			},
+			
+			/* Confirm a warning */
+			confirm : function (message, noAsDefault, title) {
+				if (title == undefined) {
+					title = "";
+				}
+				INNER.writeLog("log: " + message, "INFO", logFile); 
+				var res = INNER.confirm(message, noAsDefault, title);
+				INNER.writeLog("User interaction: " + res, "INFO", logFile); 
+				return res;
+			},
+
 		
 			/**
 			* Returns all warnings
