@@ -76,7 +76,18 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			} 
 			if ($.global.hasOwnProperty ("px") && $.global.px.hasOwnProperty ("version")  ){
 				callingScriptVersion += " v" + px.version;
-			} 
+			} 		
+			for (var i = 0; i < msgArray.length; i++) {
+				if (msgArray[i] == undefined) {
+					msg = ""; // return ?
+				}
+				if (msgArray[i] instanceof Error) {
+					msgArray[i] =  msgArray[i] + " -> " + msgArray[i].line
+				}
+				if (msgArray[i].constructor.name != String) {
+					msgArray[i] = msgArray[i].toString();
+				}
+			}
 			var msg = msgArray.join("\n");
 			var dialogWin = new Window ("dialog", title + callingScriptVersion);
 			dialogWin.etMsg = dialogWin.add ("edittext", undefined, msg, {multiline: true, scrolling: true});
