@@ -559,25 +559,26 @@ var idsTools = idsTools || function () {
 		/**
 		* Get Files Recursively
 		* @param folder
+		* @param mask
 		*/
-		/* Array */ getFilesRecursively : function (folder, fileArray) {
+		/* Array */ getFilesRecursively : function (folder, mask, fileArray) {
 			if (fileArray == undefined) fileArray = [];
 			var children = folder.getFiles();
+			for (var i = 0; i < children.length; i++) {
+				var child = children[i];
+				if (child instanceof Folder) {
+					fileArray = this.getFilesRecursively (child, mask, fileArray);
+				}
+			}
+			var children = folder.getFiles(mask);
 			for (var i = 0; i < children.length; i++) {
 				var child = children[i];
 				if (child instanceof File) {
 					fileArray.push(child);
 				}
-				else if (child instanceof Folder) {
-					fileArray = this.getFilesRecursively (child, fileArray);
-				}
-				else {
-					throw new Error("The object at \"" + child.fullName + "\" is a child of a folder and yet is not a file or folder.");
-				}
 			}
 			return fileArray;
-		},	
-		/**
+		},		/**
 		* Reads a File and returns the String
 		* @param {File} _file The File to read
 		* @return {String} The content of the File or <b>false</b>
@@ -643,7 +644,7 @@ var idsTools = idsTools || function () {
 					   (file.alias);  
 				}
 			} 
-		}
+		},
 		/**
 		* Loads XMP Library 
 		* @return {Boolean} Result
@@ -894,7 +895,6 @@ var idsTools = idsTools || function () {
 		},
 		/**
 		* Set Measurement as given in values
-		* @return {Object} The old values
 		*/
 		setDefaults : function(values) {
 			var dok = app.documents[0];
