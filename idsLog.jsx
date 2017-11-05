@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 0.99
-* @Date: 2017-03-06
+* @Version: 1.01
+* @Date: 2017-09-26
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
 
@@ -224,7 +224,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			* @message {String} message Message to log.
 			*/
 			writeln : function (message) {
-				if (px && px.hasOwnProperty ("debug") && px.debug) {
+				if (typeof px != "undefined" && px.hasOwnProperty ("debug") && px.debug) {
 					$.writeln(message);
 				}
 				if (INNER.logLevel == 0) {
