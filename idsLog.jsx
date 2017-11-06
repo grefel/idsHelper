@@ -243,7 +243,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 				}
 			},
 			/**
-			* Writes a info log message
+			* Writes an info log message
 			* @message {String} message Message to log.
 			*/
 			info : function (message) {
@@ -254,7 +254,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 				}
 			},
 			/**
-			* Writes a info log message und displays an Alert-Window
+			* Writes an info log message und displays an Alert-Window
 			* @message {String} message Message to log.
 			*/
 			infoAlert : function (message) {
@@ -263,6 +263,22 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 					counter.info++;
 					messages.info.push(message);
 					INNER.showAlert ("[INFO]", message, localize({en:"informations", de:" der Informationen"}));
+				}
+			},
+			/**
+			* Writes an info message and adds the message to the warn array
+				useful to add information to the warning messages without incrementing the warn counter.
+				e.g. put information about file name while processing different documents.
+			* @message {String} message Message to log.
+			*/
+			warnInfo : function (message) {
+				if (INNER.logLevel <= 1) {
+					INNER.writeLog(message, "INFO", logFile);
+					counter.info++;
+					messages.info.push(message);
+				}
+				if (INNER.logLevel <= 2) {
+					messages.warn.push(message);
 				}
 			},
 			/**
