@@ -175,8 +175,19 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 		} 
 	};
 
+	INNER.msToTime = function(duration) {
+		var milliseconds = parseInt((duration%1000)/100),
+			seconds = parseInt((duration/1000)%60), 
+			minutes = parseInt((duration/(1000*60))%60), 
+			hours = parseInt((duration/(1000*60*60))%24);
 
-    /****************
+        hours = (hours < 10) ? "0" + hours : hours;
+        minutes = (minutes < 10) ? "0" + minutes : minutes;
+        seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+        return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
+    };
+	/****************
     * API 
     */
 
@@ -190,6 +201,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 		if (logFile == undefined) {
 			throw Error("Cannot instantiate Log without Logfile. Please provide a File");
 		}
+		$.hiresTimer;
 		if (logFile instanceof String) {
 			logFile = File(logFile);
 		}
@@ -413,6 +425,15 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			*/
 			showLog : function () {
 				logFile.execute();
+			},
+			/**
+			* Prints elapsed time since init or last elapsedTime call
+			*/
+			elapsedTime : function () {			
+				var message = "Elapsed time: " + INNER.msToTime($.hiresTimer / 1000);
+				INNER.writeLog( message, "INFO", logFile); 
+				counter.info++;
+				messages.info.push(message);			
 			}
 		} 
 	};
