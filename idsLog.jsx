@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 1.01
-* @Date: 2017-09-26
+* @Version: 1.02
+* @Date: 2018-05-25
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
 
@@ -18,7 +18,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 	* PRIVATE
 	*/
 	var INNER = {};
-	INNER.version = "2017-02-27-0.97"
+	INNER.version = "2018-05-25-1.02";
 	INNER.disableAlerts = false;
 	INNER.logLevel = 0;
 	INNER.SEVERITY = [];
