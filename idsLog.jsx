@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 1.03
-* @Date: 2018-06-23
+* @Version: 1.02
+* @Date: 2018-05-25
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
 
@@ -180,7 +180,6 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			seconds = parseInt((duration/1000)%60), 
 			minutes = parseInt((duration/(1000*60))%60), 
 			hours = (duration < 100) ?  "0" : parseInt((duration/(1000*60*60))%24);
-
 
         hours = (hours < 10) ? "0" + hours : hours;
         minutes = (minutes < 10) ? "0" + minutes : minutes;
@@ -420,7 +419,18 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 				messages.warn = [];
 				messages.error = [];
 			},
-
+			/**
+			* Reset Message and counters - use showWarning before !
+			*/
+			resetCounterAndMessages : function () {                
+				counter.debug = 0;
+				counter.info = 0;
+				counter.warn = 0;
+				counter.error = 0;
+				messages.info = [];
+				messages.warn = [];
+				messages.error = [];
+			},
 			/**
 			* Shows the log file in the system editor
 			*/
@@ -428,7 +438,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 				logFile.execute();
 			},
 			/**
-			* Prints elapsed time since init or last elapsedTime call
+			* Prints elapsed time since and resets Timer 
 			*/
 			elapsedTime : function () {			
 				var message = "Elapsed time: " + INNER.msToTime($.hiresTimer / 1000);
@@ -436,12 +446,19 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 				counter.info++;
 				messages.info.push(message);			
 			},
+			/**
+			* reset the elapsed Time Timer
+			*/
 			resetTimer : function () {
 				$.hiresTimer;
 			},
+			/**
+			* Returns elapsed time without writing to log or resetting
+			*/
 			getElapsedTime : function () {			
 				return INNER.msToTime($.hiresTimer / 1000);
-			}		
+			}
+		
 		} 
 	};
 }) ( $.global, { toString : function() {return 'idsLog';} } );
