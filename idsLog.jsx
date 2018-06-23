@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 1.02
-* @Date: 2018-05-25
+* @Version: 1.03
+* @Date: 2018-06-23
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
 
@@ -179,7 +179,8 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 		var milliseconds = parseInt((duration%1000)/100),
 			seconds = parseInt((duration/1000)%60), 
 			minutes = parseInt((duration/(1000*60))%60), 
-			hours = parseInt((duration/(1000*60*60))%24);
+			hours = (duration < 100) ?  "0" : parseInt((duration/(1000*60*60))%24);
+
 
         hours = (hours < 10) ? "0" + hours : hours;
         minutes = (minutes < 10) ? "0" + minutes : minutes;
@@ -434,7 +435,13 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 				INNER.writeLog( message, "INFO", logFile); 
 				counter.info++;
 				messages.info.push(message);			
-			}
+			},
+			resetTimer : function () {
+				$.hiresTimer;
+			},
+			getElapsedTime : function () {			
+				return INNER.msToTime($.hiresTimer / 1000);
+			}		
 		} 
 	};
 }) ( $.global, { toString : function() {return 'idsLog';} } );
