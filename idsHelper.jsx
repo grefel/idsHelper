@@ -640,7 +640,7 @@ var idsTools = idsTools || function () {
 			else {
 				return function fileFilter (file) {
 					 return (file.constructor.name === "Folder") ||  
-					   (file.name.slice(ext.length) === ext) ||  
+					   (file.name.slice(ext.length*-1) === ext) ||  
 					   (file.alias);  
 				}
 			} 
