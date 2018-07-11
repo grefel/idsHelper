@@ -631,7 +631,7 @@ var idsTools = idsTools || function () {
 		* @param {String} type The Information Text 
 		* @return {String|Function} The Filter String for Windows, the Filter Function for MacOS
 		*/
-		getFileFilter : function (ext, type) {
+		getFileFilter = function (ext, type) {
 			ext =ext.replace(/\*/g, "");
 			if (File.fs == "Windows") {
 				type =type.replace(/:/g, "");
@@ -640,11 +640,12 @@ var idsTools = idsTools || function () {
 			else {
 				return function fileFilter (file) {
 					 return (file.constructor.name === "Folder") ||  
-					   (file.name.slice(-4) === ext) ||  
+					   (file.name.slice(ext.length) === ext) ||  
 					   (file.alias);  
 				}
 			} 
 		},
+	
 		/**
 		* Loads XMP Library 
 		* @return {Boolean} Result
