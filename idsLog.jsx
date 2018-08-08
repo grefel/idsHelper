@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 1.03
-* @Date: 2018-07-11
+* @Version: 1.04
+* @Date: 2018-08-08
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
 
@@ -18,7 +18,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 	* PRIVATE
 	*/
 	var INNER = {};
-	INNER.version = "2018-07-11-1.03";
+	INNER.version = "2018-08-08-1.04";
 	INNER.disableAlerts = false;
 	INNER.logLevel = 0;
 	INNER.SEVERITY = [];
@@ -101,7 +101,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			dialogWin.gControl.btSave = null;
 			dialogWin.gControl.btSave = dialogWin.gControl.add ("button", undefined, localize({en:"Save",de:"Speichern"}) + " " + type);
 			dialogWin.gControl.btSave.onClick = function () {
-				var texFile = File.saveDialog(localize({en:"Save information in text file ",de:"Speichern der Informationen in einer Textdatei"}), INNER.getFileFilter (".txt", localize({en:"Textfile ",de:"Textdatei"}))  );
+				var texFile = File.saveDialog(localize({en:"Save information in text file ",de:"Speichern der Informationen in einer Textdatei"}), INNER.getFileFilter (localize({en:"Textfile ",de:"Textdatei"}) + ":*.txt")  );
 				if (texFile) {
 					if (! texFile.name.match (/\.txt$/)) {
 						texFile = File(texFile.fullName + ".txt");
@@ -160,32 +160,45 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 		return confirm(message, noAsDefault, title);
 	} 
 
-	INNER.getFileFilter = function (ext, type) {
-		ext =ext.replace(/\*/g, "");
-		if (File.fs == "Windows") {
-			type =type.replace(/:/g, "");
-			return type + ":*"+ ext;
-		} 
+	INNER.getFileFilter = function (fileFilter) {
+		if (fileFilter == undefined || File.fs == "Windows") {
+			return fileFilter;
+		}
 		else {
+			// Mac
+			var extArray = fileFilter.split(":")[1].split(";");
 			return function fileFilter (file) {
-				 return (file.constructor.name === "Folder") ||  
-				   (file.name.slice(ext.length*-1) === ext) ||  
-				   (file.alias);  
-			}
-		} 
+				if (file.constructor.name === "Folder") return true;
+				if (file.alias) return true;
+				for (var e = 0; e < extArray.length; e++) {
+					var ext = extArray[e];
+					ext = ext.replace(/\*/g, "");
+					if (file.name.slice(ext.length*-1) === ext) return true;
+				}
+			}		
+		}
 	};
 
-	INNER.msToTime = function(duration) {
-		var milliseconds = parseInt((duration%1000)/100),
-			seconds = parseInt((duration/1000)%60), 
-			minutes = parseInt((duration/(1000*60))%60), 
-			hours = (duration < 100) ?  "0" : parseInt((duration/(1000*60*60))%24);
+	INNER.msToTime = function(microseconds) {
+		var milliseconds = microseconds / 1000;
+		var ms = parseInt((milliseconds%1000)/100)
+		//Get hours from milliseconds
+		var hours = milliseconds / (1000*60*60);
+		var absoluteHours = Math.floor(hours);
+		var h = absoluteHours > 9 ? absoluteHours : '0' + absoluteHours;
 
-        hours = (hours < 10) ? "0" + hours : hours;
-        minutes = (minutes < 10) ? "0" + minutes : minutes;
-        seconds = (seconds < 10) ? "0" + seconds : seconds;
+		//Get remainder from hours and convert to minutes
+		var minutes = (hours - absoluteHours) * 60;
+		var absoluteMinutes = Math.floor(minutes);
+		var m = absoluteMinutes > 9 ? absoluteMinutes : '0' +  absoluteMinutes;
 
-        return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
+		//Get remainder from minutes and convert to seconds
+		var seconds = (minutes - absoluteMinutes) * 60;
+		var absoluteSeconds = Math.floor(seconds);
+		var s = absoluteSeconds > 9 ? absoluteSeconds : '0' + absoluteSeconds;
+
+
+		return h + ':' + m + ':' + s + "." + ms;
     };
 	/****************
     * API 
