@@ -454,7 +454,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			* Prints elapsed time since and resets Timer 
 			*/
 			elapsedTime : function () {			
-				var message = "Elapsed time: " + INNER.msToTime($.hiresTimer / 1000);
+				var message = "Elapsed time: " + INNER.msToTime($.hiresTimer);
 				INNER.writeLog( message, "INFO", logFile); 
 				counter.info++;
 				messages.info.push(message);			
@@ -469,7 +469,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			* Returns elapsed time without writing to log or resetting
 			*/
 			getElapsedTime : function () {			
-				return INNER.msToTime($.hiresTimer / 1000);
+				return INNER.msToTime($.hiresTimer);
 			}
 		
 		} 
