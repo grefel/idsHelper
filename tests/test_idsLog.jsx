@@ -56,6 +56,14 @@ function test2() {
 	
 //~     $.writeln("log.warnings: " + log.getWarnings());
 	log.disableAlerts(false);
+	
+	
+	try {
+		app.documents[99].name;
+	}
+	catch (e) {
+		log.warn(e);
+	}
 
  	log.showWarnings();
 //~     log.showLog();

@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 1.04
-* @Date: 2018-08-08
+* @Version: 1.05
+* @Date: 2018-08-10
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
 
@@ -18,7 +18,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 	* PRIVATE
 	*/
 	var INNER = {};
-	INNER.version = "2018-08-08-1.04";
+	INNER.version = "2018-08-10-1.05";
 	INNER.disableAlerts = false;
 	INNER.logLevel = 0;
 	INNER.SEVERITY = [];
@@ -27,17 +27,21 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 	INNER.SEVERITY["WARN"] = 2;
 	INNER.SEVERITY["INFO"] = 1;
 	INNER.SEVERITY["DEBUG"] = 0;
-
-	INNER.writeLog = function(msg, severity, file) { 
+	
+	INNER.processMsg = function(msg) {
 		if (msg == undefined) {
 			msg = ""; // return ?
 		}
 		if (( msg instanceof Error) ) {
-			msg =  msg + " -> " + msg.line
+			msg =  msg + " Line: " + msg.line + " # " + msg.number + " File: " + msg.fileName;
 		}
 		if (msg.constructor.name != String) {
 			msg = msg.toString();
 		}	
+		return msg;
+	}
+
+	INNER.writeLog = function(msg, severity, file) { 
 		var date = new Date();
 		var month = date.getMonth() + 1;
 		var day = date.getDate();
@@ -249,6 +253,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			* @message {String} message Message to log.
 			*/
 			writeln : function (message) {
+				message = INNER.processMsg(message);
 				if (typeof px != "undefined" && px.hasOwnProperty ("debug") && px.debug) {
 					$.writeln(message);
 				}
@@ -262,6 +267,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			* @message {String} message Message to log.
 			*/
 			debug : function (message) {
+				message = INNER.processMsg(message);
 				if (INNER.logLevel == 0) {
 					INNER.writeLog(message, "DEBUG", logFile);
 					counter.debug++;
@@ -272,6 +278,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			* @message {String} message Message to log.
 			*/
 			info : function (message) {
+				message = INNER.processMsg(message);
 				if (INNER.logLevel <= 1) {
 					INNER.writeLog(message, "INFO", logFile); 
 					counter.info++;
@@ -283,6 +290,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			* @message {String} message Message to log.
 			*/
 			infoAlert : function (message) {
+				message = INNER.processMsg(message);
 				if (INNER.logLevel <= 2) {
 					INNER.writeLog(message, "INFO", logFile); 
 					counter.info++;
@@ -297,6 +305,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			* @message {String} message Message to log.
 			*/
 			warnInfo : function (message) {
+				message = INNER.processMsg(message);
 				if (INNER.logLevel <= 1) {
 					INNER.writeLog(message, "INFO", logFile);
 					counter.info++;
@@ -311,6 +320,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			* @message {String} message Message to log.
 			*/
 			warn : function (message) {
+				message = INNER.processMsg(message);
 				if (INNER.logLevel <= 2) {
 					INNER.writeLog(message, "WARN", logFile);
 					counter.warn++;
@@ -322,6 +332,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			* @message {String} message Message to log.
 			*/
 			warnAlert : function (message) {
+				message = INNER.processMsg(message);
 				if (INNER.logLevel <= 2) {
 					INNER.writeLog(message, "WARN", logFile); 
 					counter.warn++;
@@ -334,6 +345,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			* @message {String} message Message to log.
 			*/
 			error : function (message) {
+				message = INNER.processMsg(message);
 				if (INNER.logLevel <= 3) {
 					INNER.writeLog(message, "ERROR", logFile); 
 					counter.error++;
@@ -361,6 +373,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			
 			/* Confirm a warning */
 			confirm : function (message, noAsDefault, title) {
+				message = INNER.processMsg(message);
 				if (title == undefined) {
 					title = "";
 				}
