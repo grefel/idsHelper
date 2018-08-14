@@ -631,7 +631,7 @@ var idsTools = idsTools || function () {
 		* @param {String} type The Information Text 
 		* @return {String|Function} The Filter String for Windows, the Filter Function for MacOS
 		*/
-		getFileFilter = function (ext, type) {
+		getFileFilter : function (ext, type) {
 			ext =ext.replace(/\*/g, "");
 			if (File.fs == "Windows") {
 				type =type.replace(/:/g, "");
