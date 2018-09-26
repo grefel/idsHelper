@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 1.05
-* @Date: 2018-08-10
+* @Version: 1.06
+* @Date: 2018-09-26
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
 
@@ -18,7 +18,7 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 	* PRIVATE
 	*/
 	var INNER = {};
-	INNER.version = "2018-08-10-1.05";
+	INNER.version = "2018-09-26-1.06";
 	INNER.disableAlerts = false;
 	INNER.logLevel = 0;
 	INNER.SEVERITY = [];
@@ -321,6 +321,9 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			*/
 			warn : function (message) {
 				message = INNER.processMsg(message);
+				if (typeof px != "undefined" && px.hasOwnProperty ("debug") && px.debug) {
+					$.writeln("WARN: \n" + message);
+				}				
 				if (INNER.logLevel <= 2) {
 					INNER.writeLog(message, "WARN", logFile);
 					counter.warn++;
