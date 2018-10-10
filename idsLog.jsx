@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 1.06
-* @Date: 2018-09-26
+* @Version: 1.07
+* @Date: 2018-10-10
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
 
@@ -486,8 +486,13 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			*/
 			getElapsedTime : function () {			
 				return INNER.msToTime($.hiresTimer);
-			}
-		
+			},
+			/**
+			* Returns the current log Folder path
+			*/
+			getLogFolder : function () {
+				return logFile.parent;
+			}		
 		} 
 	};
 }) ( $.global, { toString : function() {return 'idsLog';} } );
