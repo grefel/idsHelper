@@ -336,6 +336,9 @@ $.global.hasOwnProperty('idsLog') || ( function (HOST, SELF) {
 			*/
 			warnAlert : function (message) {
 				message = INNER.processMsg(message);
+				if (typeof px != "undefined" && px.hasOwnProperty ("debug") && px.debug) {
+					$.writeln("WARN: \n" + message);
+				}				
 				if (INNER.logLevel <= 2) {
 					INNER.writeLog(message, "WARN", logFile); 
 					counter.warn++;
