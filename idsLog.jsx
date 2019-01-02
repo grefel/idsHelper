@@ -18,7 +18,6 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 	* PRIVATE
 	*/
 	var INNER = {};
-	INNER.version = "2018-09-26-1.06";
 	INNER.disableAlerts = false;
 	INNER.logLevel = 0;
 	INNER.SEVERITY = [];
