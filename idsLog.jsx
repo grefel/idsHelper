@@ -39,7 +39,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 		}
 
 		if (object != undefined) {
-			msg += localize({ en: "Object is located at", de: "Objekt befindet sich" }) + " [" + INNER.getPageNameFromObject(object) + "]";
+			msg += " " + localize({ en: "Object is located at", de: "Objekt befindet sich" }) + " [" + INNER.getPageNameFromObject(object) + "]";
 		}
 		return msg;
 	}
