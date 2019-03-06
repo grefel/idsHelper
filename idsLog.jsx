@@ -34,7 +34,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 		if ((msg instanceof Error)) {
 			msg = msg + " Line: " + msg.line + " # " + msg.number + " File: " + msg.fileName;
 		}
-		if (msg.constructor.name != String) {
+		if (msg.constructor.name != "String") {
 			msg = msg.toString();
 		}
 
