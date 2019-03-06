@@ -1,6 +1,6 @@
 ﻿/****************
 * Logging Class 
-* @Version: 1.10
+* @Version: 1.11
 * @Date: 2019-03-06
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
@@ -574,7 +574,13 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			*/
 			getLogFolder: function () {
 				return logFile.parent;
-			}
+			},
+			/**
+			* Returns the current log File path
+			*/
+			getLogFile: function () {
+				return logFile;
+			}			
 		}
 	};
 })($.global, { toString: function () { return 'idsLog'; } });
