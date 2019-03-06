@@ -313,8 +313,9 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			/**
 			* Writes a debug log message
 			* @message {String} message Message to log.
+			* @object {Object} Log the page name of the given object
 			*/
-			writeln: function (message) {
+			writeln: function (message, object) {
 				message = INNER.processMsg(message, object);
 				if (typeof px != "undefined" && px.hasOwnProperty("debug") && px.debug) {
 					$.writeln(message);
@@ -327,8 +328,9 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			/**
 			* Writes a debug log message
 			* @message {String} message Message to log.
+			* @object {Object} Log the page name of the given object
 			*/
-			debug: function (message) {
+			debug: function (message, object) {
 				message = INNER.processMsg(message, object);
 				if (INNER.logLevel == 0) {
 					INNER.writeLog(message, "DEBUG", logFile);
@@ -338,8 +340,9 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			/**
 			* Writes an info log message
 			* @message {String} message Message to log.
+			* @object {Object} Log the page name of the given object
 			*/
-			info: function (message) {
+			info: function (message, object) {
 				message = INNER.processMsg(message, object);
 				if (INNER.logLevel <= 1) {
 					INNER.writeLog(message, "INFO", logFile);
@@ -350,8 +353,9 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			/**
 			* Writes an info log message und displays an Alert-Window
 			* @message {String} message Message to log.
+			* @object {Object} Log the page name of the given object
 			*/
-			infoAlert: function (message) {
+			infoAlert: function (message, object) {
 				message = INNER.processMsg(message, object);
 				if (INNER.logLevel <= 2) {
 					INNER.writeLog(message, "INFO", logFile);
@@ -365,8 +369,9 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 				useful to add information to the warning messages without incrementing the warn counter.
 				e.g. put information about file name while processing different documents.
 			* @message {String} message Message to log.
+			* @object {Object} Log the page name of the given object
 			*/
-			warnInfo: function (message) {
+			warnInfo: function (message, object) {
 				message = INNER.processMsg(message, object);
 				if (INNER.logLevel <= 1) {
 					INNER.writeLog(message, "INFO", logFile);
@@ -380,8 +385,9 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			/**
 			* Writes a warn log message
 			* @message {String} message Message to log.
+			* @object {Object} Log the page name of the given object
 			*/
-			warn: function (message) {
+			warn: function (message, object) {
 				message = INNER.processMsg(message, object);
 				if (typeof px != "undefined" && px.hasOwnProperty("debug") && px.debug) {
 					$.writeln("WARN: \n" + message);
@@ -395,8 +401,9 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			/**
 			* Writes a warn log message und displays an Alert-Window
 			* @message {String} message Message to log.
+			* @object {Object} Log the page name of the given object
 			*/
-			warnAlert: function (message) {
+			warnAlert: function (message, object) {
 				message = INNER.processMsg(message, object);
 				if (INNER.logLevel <= 2) {
 					INNER.writeLog(message, "WARN", logFile);
@@ -408,8 +415,9 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			/**
 			* Writes a error log message
 			* @message {String} message Message to log.
+			* @object {Object} Log the page name of the given object
 			*/
-			error: function (message) {
+			error: function (message, object) {
 				message = INNER.processMsg(message, object);
 				if (INNER.logLevel <= 3) {
 					INNER.writeLog(message, "ERROR", logFile);
@@ -442,8 +450,14 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 				}
 			},
 
-			/* Confirm a warning */
-			confirm: function (message, noAsDefault, title) {
+			/** 
+			 * Confirm a warning 
+			 * @message {String} message Message to log.
+			 * @noAsDefault {Boolean} 
+			 * @title {String}
+			 * @object {Object} Log the page name of the given object
+			 * */
+			confirm: function (message, noAsDefault, title, object) {
 				message = INNER.processMsg(message, object);
 				if (title == undefined) {
 					title = "";
