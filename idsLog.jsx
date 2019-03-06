@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 1.08
-* @Date: 2018-12-14
+* @Version: 1.10
+* @Date: 2019-03-06
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
 
@@ -27,7 +27,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 	INNER.SEVERITY["INFO"] = 1;
 	INNER.SEVERITY["DEBUG"] = 0;
 
-	INNER.processMsg = function (msg) {
+	INNER.processMsg = function (msg, object) {
 		if (msg == undefined) {
 			msg = ""; // return ?
 		}
@@ -37,7 +37,70 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 		if (msg.constructor.name != String) {
 			msg = msg.toString();
 		}
+
+		if (object != undefined) {
+			msg += localize({ en: "Object is located at", de: "Objekt befindet sich" }) + " [" + INNER.getPageNameFromObject(object) + "]";
+		}
 		return msg;
+	}
+
+	INNER.getPageNameFromObject = function (object) {
+		var pagePositionMessage = "";
+		if (object != null) {
+			object = object.getElements()[0]; // Get Object from Superclass like PageItem
+			if (object.hasOwnProperty("baseline")) {
+				if (object.parentTextFrames.length == 0) {
+					object = object.parentStory.textContainers[object.parentStory.textContainers.length - 1];
+					pagePositionMessage += localize({ en: "Overset text. Position of the last text frame: ", de: "Im Übersatz. Position des letzten Textrahmens: " });
+				}
+				else {
+					object = object.parentTextFrames[0];
+				}
+			}
+			while (object != null) {
+				if (object.hasOwnProperty("parentPage")) {
+					if (object.parentPage == null && object.parent instanceof Spread) {
+						pagePositionMessage += localize({ en: "Spread ", de: "Druckbogen " });
+						return pagePositionMessage + (object.parent.index + 1);
+					}
+					else if (object.parentPage == null) {
+						object = object.parent;
+						continue;
+					}
+					else {
+						return localize({ en: "Page ", de: "Seite " }) + object.parentPage.name;
+					}
+				}
+				var whatIsIt = object.constructor;
+				switch (whatIsIt) {
+					case Page: return pagePositionMessage + localize({ en: "Page ", de: "Seite " }) + object.name;
+					case Character: object = object.parentTextFrames[0]; break;
+					case Footnote: ; // drop through
+					case Cell: object = object.insertionPoints[0].parentTextFrames[0]; break;
+					case Note: object = object.storyOffset.parentTextFrames[0]; break;
+					case XMLElement:
+						if (object.pageItems.length > 0) {
+							object = object.pageItems[0];
+						}
+						else if (object.insertionPoints[0] != null) {
+							if (object.insertionPoints[0].parentTextFrames.length > 0) {
+								object = object.insertionPoints[0].parentTextFrames[0];
+							}
+							else {
+								return pagePositionMessage + localize({ en: "Could not detect page", de: "Konnte Seite nicht ermitteln" });
+							}
+						}
+						break;
+					case Application: return pagePositionMessage + localize({ en: "Could not detect page Application", de: "Konnte Seite nicht ermitteln Application" });
+					default: object = object.parent;
+				}
+				if (object == null) return pagePositionMessage + localize({ en: "Could not detect page null", de: "Konnte Seite nicht ermitteln null" });
+			}
+			return pagePositionMessage + object;
+		}
+		else {
+			return pagePositionMessage + localize({ en: "Could not detect page", de: "Konnte Seite nicht ermitteln" });
+		}
 	}
 
 	INNER.writeLog = function (msg, severity, file) {
@@ -252,7 +315,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			* @message {String} message Message to log.
 			*/
 			writeln: function (message) {
-				message = INNER.processMsg(message);
+				message = INNER.processMsg(message, object);
 				if (typeof px != "undefined" && px.hasOwnProperty("debug") && px.debug) {
 					$.writeln(message);
 				}
@@ -266,7 +329,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			* @message {String} message Message to log.
 			*/
 			debug: function (message) {
-				message = INNER.processMsg(message);
+				message = INNER.processMsg(message, object);
 				if (INNER.logLevel == 0) {
 					INNER.writeLog(message, "DEBUG", logFile);
 					counter.debug++;
@@ -277,7 +340,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			* @message {String} message Message to log.
 			*/
 			info: function (message) {
-				message = INNER.processMsg(message);
+				message = INNER.processMsg(message, object);
 				if (INNER.logLevel <= 1) {
 					INNER.writeLog(message, "INFO", logFile);
 					counter.info++;
@@ -289,7 +352,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			* @message {String} message Message to log.
 			*/
 			infoAlert: function (message) {
-				message = INNER.processMsg(message);
+				message = INNER.processMsg(message, object);
 				if (INNER.logLevel <= 2) {
 					INNER.writeLog(message, "INFO", logFile);
 					counter.info++;
@@ -304,7 +367,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			* @message {String} message Message to log.
 			*/
 			warnInfo: function (message) {
-				message = INNER.processMsg(message);
+				message = INNER.processMsg(message, object);
 				if (INNER.logLevel <= 1) {
 					INNER.writeLog(message, "INFO", logFile);
 					counter.info++;
@@ -319,7 +382,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			* @message {String} message Message to log.
 			*/
 			warn: function (message) {
-				message = INNER.processMsg(message);
+				message = INNER.processMsg(message, object);
 				if (typeof px != "undefined" && px.hasOwnProperty("debug") && px.debug) {
 					$.writeln("WARN: \n" + message);
 				}
@@ -334,7 +397,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			* @message {String} message Message to log.
 			*/
 			warnAlert: function (message) {
-				message = INNER.processMsg(message);
+				message = INNER.processMsg(message, object);
 				if (INNER.logLevel <= 2) {
 					INNER.writeLog(message, "WARN", logFile);
 					counter.warn++;
@@ -347,7 +410,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			* @message {String} message Message to log.
 			*/
 			error: function (message) {
-				message = INNER.processMsg(message);
+				message = INNER.processMsg(message, object);
 				if (INNER.logLevel <= 3) {
 					INNER.writeLog(message, "ERROR", logFile);
 					counter.error++;
@@ -381,7 +444,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 
 			/* Confirm a warning */
 			confirm: function (message, noAsDefault, title) {
-				message = INNER.processMsg(message);
+				message = INNER.processMsg(message, object);
 				if (title == undefined) {
 					title = "";
 				}
