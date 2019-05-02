@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 1.11
-* @Date: 2019-03-06
+* @Version: 1.12
+* @Date: 2019-05-02
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
 
@@ -556,6 +556,9 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 				INNER.writeLog(message, "INFO", logFile);
 				counter.info++;
 				messages.info.push(message);
+				if (typeof px != "undefined" && px.hasOwnProperty("debug") && px.debug) {
+					$.writeln(message);
+				}
 			},
 			/**
 			* reset the elapsed Time Timer
