@@ -521,7 +521,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			* Shows all messages
 			*/
 			showMessages: function () {
-				INNER.showMessages("Es gab " + counter.all + " Meldungen", messages.all, localize({ en: "Messages", de: "Meldungen" }));
+				INNER.showMessages("Es gab " + (counter.debug + counter.info + counter.warn + counter.error) + " Meldungen", messages.all, localize({ en: "Messages", de: "Meldungen" }));
 			},
 			/**
 			* Shows all infos
