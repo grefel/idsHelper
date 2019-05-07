@@ -441,7 +441,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 				INNER.showMessages("Es gab " + counter.warn + " Warnmeldungen", messages.warn, localize({ en: "warnings", de: "der Warnungen" }));
 			},
 			/**
-			* Confirm all warnings
+			* Confirm all infos
 			*/
 			confirmInfos: function () {
 				var message = "Die folgenden Probleme sind aufgetreten. Soll das Skript weiter ausgeführt werden?";
@@ -456,7 +456,8 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 				else {
 					return false;
 				}
-			},			/**
+			},
+			/**
 			* Confirm all warnings
 			*/
 			confirmWarnings: function () {
@@ -474,7 +475,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 				}
 			},
 			/**
-			* Confirm all warnings
+			* Confirm all messages
 			*/
 			confirmMessages: function () {
 				var message = "Die folgenden Probleme sind aufgetreten. Soll das Skript weiter ausgeführt werden?";
@@ -517,10 +518,16 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 				return messages.warn.join("\n");
 			},
 			/**
+			* Shows all messages
+			*/
+			showMessages: function () {
+				INNER.showMessages("Es gab " + counter.all + " Meldungen", messages.all, localize({ en: "Messages", de: "Meldungen" }));
+			},
+			/**
 			* Shows all infos
 			*/
 			showInfos: function () {
-				INNER.showMessages("Es gab " + counter.info + " Infos", messages.info, localize({ en: "informations", de: " der Informationen" }));
+				INNER.showMessages("Es gab " + counter.info + " Infos", messages.info, localize({ en: "Informations", de: " Informationen" }));
 			},
 			/**
 			* Returns all infos
@@ -532,7 +539,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			* Shows all errors
 			*/
 			showErrors: function () {
-				INNER.showMessages("Es gab " + counter.error + " Fehler", messages.error, localize({ en: "errors", de: "der Fehler" }));
+				INNER.showMessages("Es gab " + counter.error + " Fehler", messages.error, localize({ en: "Errors", de: "Fehler" }));
 			},
 			/**
 			* Returns all errors
