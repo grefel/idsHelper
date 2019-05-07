@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 1.12
-* @Date: 2019-05-02
+* @Version: 1.14
+* @Date: 2019-05-07
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
 
@@ -195,7 +195,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			var msg = msgArray.join("\n");
 			var dialogWin = new Window("dialog", title + callingScriptVersion);
 			dialogWin.etMsg = dialogWin.add("edittext", undefined, msg, { multiline: true, scrolling: true });
-			dialogWin.etMsg.maximumSize.height = 300;
+			dialogWin.etMsg.maximumSize.height = 400;
 			dialogWin.etMsg.minimumSize.width = 500;
 
 			dialogWin.gControl = dialogWin.add("group");
@@ -304,6 +304,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			error: 0
 		}
 		var messages = {
+			all: [],
 			info: [],
 			warn: [],
 			error: []
@@ -348,6 +349,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 					INNER.writeLog(message, "INFO", logFile);
 					counter.info++;
 					messages.info.push(message);
+					messages.all.push(message);
 				}
 			},
 			/**
@@ -361,6 +363,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 					INNER.writeLog(message, "INFO", logFile);
 					counter.info++;
 					messages.info.push(message);
+					messages.all.push(message);
 					INNER.showAlert("[INFO]", message, localize({ en: "informations", de: " der Informationen" }));
 				}
 			},
@@ -377,9 +380,11 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 					INNER.writeLog(message, "INFO", logFile);
 					counter.info++;
 					messages.info.push(message);
+					messages.all.push(message);
 				}
 				if (INNER.logLevel <= 2) {
 					messages.warn.push(message);
+					messages.all.push(message);
 				}
 			},
 			/**
@@ -396,6 +401,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 					INNER.writeLog(message, "WARN", logFile);
 					counter.warn++;
 					messages.warn.push(message);
+					messages.all.push(message);
 				}
 			},
 			/**
@@ -409,6 +415,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 					INNER.writeLog(message, "WARN", logFile);
 					counter.warn++;
 					messages.warn.push(message);
+					messages.all.push(message);
 					INNER.showAlert("[WARN]", message + "\n\nPrüfen Sie auch das Logfile:\n" + logFile, localize({ en: "warnings", de: "der Warnungen" }));
 				}
 			},
@@ -423,6 +430,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 					INNER.writeLog(message, "ERROR", logFile);
 					counter.error++;
 					messages.error.push(message);
+					messages.all.push(message);
 				}
 			},
 
@@ -435,13 +443,46 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			/**
 			* Confirm all warnings
 			*/
+			confirmInfos: function () {
+				var message = "Die folgenden Probleme sind aufgetreten. Soll das Skript weiter ausgeführt werden?";
+				INNER.writeLog(message, "INFO", logFile);
+
+				var res = INNER.confirmMessages(message, messages.info, localize({ en: "warnings", de: "der Warnungen" }));
+				INNER.writeLog("User interaction: " + res, "INFO", logFile);
+				messages.info = [];
+				if (res == 1) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			},			/**
+			* Confirm all warnings
+			*/
 			confirmWarnings: function () {
-				var message = "Sollen die folgenden Operationen ausgeführt werden?"
+				var message = "Die folgenden Probleme sind aufgetreten. Soll das Skript weiter ausgeführt werden?";
 				INNER.writeLog(message, "INFO", logFile);
 
 				var res = INNER.confirmMessages(message, messages.warn, localize({ en: "warnings", de: "der Warnungen" }));
 				INNER.writeLog("User interaction: " + res, "INFO", logFile);
 				messages.warn = [];
+				if (res == 1) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			},
+			/**
+			* Confirm all warnings
+			*/
+			confirmMessages: function () {
+				var message = "Die folgenden Probleme sind aufgetreten. Soll das Skript weiter ausgeführt werden?";
+				INNER.writeLog(message, "INFO", logFile);
+
+				var res = INNER.confirmMessages(message, messages.all, localize({ en: "warnings", de: "der Warnungen" }));
+				INNER.writeLog("User interaction: " + res, "INFO", logFile);
+				messages.all = [];
 				if (res == 1) {
 					return true;
 				}
@@ -529,6 +570,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 				messages.info = [];
 				messages.warn = [];
 				messages.error = [];
+				messages.all = [];
 			},
 			/**
 			* Reset Message and counters - use showWarning before !
@@ -541,6 +583,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 				messages.info = [];
 				messages.warn = [];
 				messages.error = [];
+				messages.all = [];
 			},
 			/**
 			* Shows the log file in the system editor
@@ -556,6 +599,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 				INNER.writeLog(message, "INFO", logFile);
 				counter.info++;
 				messages.info.push(message);
+				messages.all.push(message);
 				if (typeof px != "undefined" && px.hasOwnProperty("debug") && px.debug) {
 					$.writeln(message);
 				}
