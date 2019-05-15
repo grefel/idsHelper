@@ -379,6 +379,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 					messages.info.push(message);
 				}
 				if (INNER.logLevel <= 2) {
+					INNER.writeLog(message, "INFO", logFile);
 					messages.warn.push(message);
 				}
 			},
