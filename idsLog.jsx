@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 1.14
-* @Date: 2019-05-07
+* @Version: 1.15
+* @Date: 2019-07-12
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
 
@@ -48,6 +48,9 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 		var pagePositionMessage = "";
 		if (object != null) {
 			object = object.getElements()[0]; // Get Object from Superclass like PageItem
+			if (object.hasOwnProperty("sourceText")) {
+				object = object.sourceText;
+			}
 			if (object.hasOwnProperty("baseline")) {
 				if (object.parentTextFrames.length == 0) {
 					object = object.parentStory.textContainers[object.parentStory.textContainers.length - 1];
