@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 1.15
-* @Date: 2019-07-12
+* @Version: 1.16
+* @Date: 2019-11-14
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
 
@@ -51,15 +51,28 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			if (object.hasOwnProperty("sourceText")) {
 				object = object.sourceText;
 			}
+			// Text
 			if (object.hasOwnProperty("baseline")) {
 				if (object.parentTextFrames.length == 0) {
-					object = object.parentStory.textContainers[object.parentStory.textContainers.length - 1];
+					object = object.parent.parentStory.textContainers[object.parentStory.textContainers.length - 1];
 					pagePositionMessage += localize({ en: "Overset text. Position of the last text frame: ", de: "Im Übersatz. Position des letzten Textrahmens: " });
 				}
 				else {
 					object = object.parentTextFrames[0];
 				}
 			}
+			// Anchored Object
+			if (object.parent.constructor.name == "Character") {
+				if (object.parent.parentTextFrames.length == 0) {
+					object = object.parentStory.textContainers[object.parentStory.textContainers.length - 1];
+					pagePositionMessage += localize({ en: "Overset text. Position of the last text frame: ", de: "Im Übersatz. Position des letzten Textrahmens: " });
+				}
+				else {
+					object = object.parent.parentTextFrames[0];
+				}
+			}
+
+
 			while (object != null) {
 				if (object.hasOwnProperty("parentPage")) {
 					if (object.parentPage == null && object.parent instanceof Spread) {
@@ -638,7 +651,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			*/
 			getLogFile: function () {
 				return logFile;
-			}			
+			}
 		}
 	};
 })($.global, { toString: function () { return 'idsLog'; } });
