@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 1.16
-* @Date: 2019-11-14
+* @Version: 1.17
+* @Date: 2020-02-14
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
 
@@ -302,6 +302,17 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 		}
 		if (!(logFile instanceof File)) {
 			throw Error("Cannot instantiate Log. Please provide a File");
+		}
+		// Logrotate > 1 MB
+		if (logFile.length > 1000000) {
+			try {
+				var rotateFile = File(logFile.toString().replace(/\.txt$/, "") + "_logrotate.txt");
+				logFile.copy(rotateFile);
+				logFile.remove();
+			}
+			catch (e) {
+				throw Error("Could not move the log File! Error: " + e);
+			}
 		}
 		if (logLevel == undefined) {
 			logLevel = "INFO";
