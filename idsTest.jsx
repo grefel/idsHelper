@@ -1,8 +1,9 @@
 ﻿/****************
 * Testing Framework for Unit Testing
-* @Version: 0.91
+* @Version: 0.92
 * @Date: 2016-03-07
 * @Author: Gregor Fellenz, http://www.publishingx.de
+* @Author: Roland Dreger
 * Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
 
 * Usage: 
@@ -199,9 +200,145 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 		}
 	};
 
+	/**
+	 * Objektsuche im Dokument
+	 * Objekttypen: 
+	 * ObjectTypes.ALL_FRAMES_TYPE
+	 * ObjectTypes.GRAPHIC_FRAMES_TYPE
+	 * ObjectTypes.TEXT_FRAMES_TYPE
+	 * ObjectTypes.UNASSIGNED_FRAMES_TYPE
+	 */
+	SELF.assertObjectInDoc = function (message, objectType, findObjectPreferences, doc, expectedLength) {
+		message = message + " <em>Objekt-Suche <span class='code'>assertObjectInDoc</span></em>";
+		try {
+			// Save Options
+			var saveFindObjectOptions = {};
+			saveFindObjectOptions.includeFootnotes = app.findChangeObjectOptions.includeFootnotes;
+			saveFindObjectOptions.includeHiddenLayers = app.findChangeObjectOptions.includeHiddenLayers;
+			saveFindObjectOptions.includeLockedLayersForFind = app.findChangeObjectOptions.includeLockedLayersForFind;
+			saveFindObjectOptions.includeLockedStoriesForFind = app.findChangeObjectOptions.includeLockedStoriesForFind;
+			saveFindObjectOptions.includeMasterPages = app.findChangeObjectOptions.includeMasterPages;
+			saveFindObjectOptions.objectType = app.findChangeObjectOptions.objectType;
+			
+			// Set Options
+			app.findChangeObjectOptions.includeFootnotes = true;
+			app.findChangeObjectOptions.includeHiddenLayers = true;
+			app.findChangeObjectOptions.includeLockedLayersForFind = false;
+			app.findChangeObjectOptions.includeLockedStoriesForFind = false;
+			app.findChangeObjectOptions.includeMasterPages = false;
+			app.findChangeObjectOptions.objectType = objectType; 
+			
+			app.findObjectPreferences = NothingEnum.NOTHING;
+			app.findObjectPreferences.properties = findObjectPreferences;
 
+			var results = doc.findObject();
 
+			// Reset Options
+			app.findChangeObjectOptions.includeFootnotes = saveFindObjectOptions.includeFootnotes;
+			app.findChangeObjectOptions.includeHiddenLayers = saveFindObjectOptions.includeHiddenLayers;
+			app.findChangeObjectOptions.includeLockedLayersForFind = saveFindObjectOptions.includeLockedLayersForFind;
+			app.findChangeObjectOptions.includeLockedStoriesForFind = saveFindObjectOptions.includeLockedStoriesForFind;
+			app.findChangeObjectOptions.includeMasterPages = saveFindObjectOptions.includeMasterPages;
+			app.findChangeObjectOptions.objectType = saveFindObjectOptions.objectType;
+			
+			if (results.length != expectedLength) {
+				INNER.testResults.push({ failed: true, message: message, result: "Object: " + findObjectPreferences.toSource() });
+				if (INNER.consoleLog) { 
+					$.writeln("Test: " + message + "\nExpected: " + expectedLength + "\nActual: " + results.length + "\n\n"); 
+				}
+			}
+			else {
+				INNER.testResults.push({ failed: false, message: message, result: "Object: " + findObjectPreferences.toSource() + " with " + results.length + " hits." });
+			}
+		}
+		catch (e) {
+			INNER.testResults.push({ failed: false, message: message, result: "Error: " + e });
+		}
+	};
 
+	/**
+	 * Tabellensuche in Dokument
+	 * @param {String} message
+	 * @param {TableStyle} tableStyle - Tabellenformat der gesuchten Tabelle
+	 * @param {Document} doc
+	 * @param {Number} expectedLength - Erwartete Anzahl an Tabellen 
+	 */
+	SELF.assertTableInDoc = function (message, tableStyle, doc, expectedLength) {
+		message = message + " <em>Tabellen-Suche <span class='code'>assertTableInDoc</span></em>";
+
+		var findTextPreferences = {
+			findWhat:"<0016>"
+		};
+		
+		try {
+			// Save Options
+			var saveFindTextOptions = {};
+			saveFindTextOptions.caseSensitive = app.findChangeTextOptions.caseSensitive;
+			saveFindTextOptions.wholeWord = app.findChangeTextOptions.wholeWord;
+			saveFindTextOptions.includeFootnotes = app.findChangeTextOptions.includeFootnotes;
+			saveFindTextOptions.includeHiddenLayers = app.findChangeTextOptions.includeHiddenLayers;
+			saveFindTextOptions.includeLockedLayersForFind = app.findChangeTextOptions.includeLockedLayersForFind;
+			saveFindTextOptions.includeLockedStoriesForFind = app.findChangeTextOptions.includeLockedStoriesForFind;
+			saveFindTextOptions.includeMasterPages = app.findChangeTextOptions.includeMasterPages;
+			if (app.findChangeTextOptions.hasOwnProperty("searchBackwards")) { saveFindTextOptions.searchBackwards = app.findChangeTextOptions.searchBackwards; }
+
+			// Set Options
+			app.findChangeTextOptions.caseSensitive = false;
+			app.findChangeTextOptions.wholeWord = false;
+			app.findChangeTextOptions.includeFootnotes = true;
+			app.findChangeTextOptions.includeHiddenLayers = true;
+			app.findChangeTextOptions.includeLockedLayersForFind = false;
+			app.findChangeTextOptions.includeLockedStoriesForFind = false;
+			app.findChangeTextOptions.includeMasterPages = false;
+			if (app.findChangeTextOptions.hasOwnProperty("searchBackwards")) { app.findChangeTextOptions.searchBackwards = false; }
+
+			app.findTextPreferences = NothingEnum.NOTHING;
+			app.findTextPreferences.properties = findTextPreferences;
+
+			var results = doc.findText();
+
+			// Reset Options
+			app.findChangeTextOptions.caseSensitive = saveFindTextOptions.caseSensitive;
+			app.findChangeTextOptions.wholeWord = saveFindTextOptions.wholeWord;
+			app.findChangeTextOptions.includeFootnotes = saveFindTextOptions.includeFootnotes;
+			app.findChangeTextOptions.includeHiddenLayers = saveFindTextOptions.includeHiddenLayers;
+			app.findChangeTextOptions.includeLockedLayersForFind = saveFindTextOptions.includeLockedLayersForFind;
+			app.findChangeTextOptions.includeLockedStoriesForFind = saveFindTextOptions.includeLockedStoriesForFind;
+			app.findChangeTextOptions.includeMasterPages = saveFindTextOptions.includeMasterPages;
+			if (app.findChangeTextOptions.hasOwnProperty("searchBackwards")) app.findChangeTextOptions.searchBackwards = saveFindTextOptions.searchBackwards;
+
+			/* Loop: Tables */
+			for (var i = results.length-1; i >=0 ; i--) {
+
+				var curTableChar = results[i];
+				if (!curTableChar || !curTableChar.isValid) {
+					continue;
+				}
+
+				var curTable = curTableChar.tables.firstItem();
+				if (!curTable.isValid) {
+					continue;
+				}
+				
+				if(curTable.appliedTableStyle !== tableStyle) {
+					results.splice(i,1);
+				}
+			}
+
+			if (results.length != expectedLength) {
+				INNER.testResults.push({ failed: true, message: message, result: "Table: " + findTextPreferences.toSource() + "; Tabellenformat: " + tableStyle.name });
+				if (INNER.consoleLog) { 
+					$.writeln("Test: " + message + "\nExpected: " + expectedLength + "\nActual: " + results.length + "\n\n"); 
+				}
+			}
+			else {
+				INNER.testResults.push({ failed: false, message: message, result: "Table: " + findTextPreferences.toSource() + " with " + results.length + " hits." });
+			}
+		}
+		catch (e) {
+			INNER.testResults.push({ failed: false, message: message, result: "Error: " + e });
+		}
+	};
 
 	SELF.insertBlock = function (message, info) {
 		INNER.testResults.push({ failed: "block", "message": message, "result": info });
