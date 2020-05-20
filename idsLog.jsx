@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 1.17
-* @Date: 2020-02-14
+* @Version: 1.18
+* @Date: 2020-05-20
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
 
@@ -54,8 +54,13 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			// Text
 			if (object.hasOwnProperty("baseline")) {
 				if (object.parentTextFrames.length == 0) {
-					object = object.parent.parentStory.textContainers[object.parentStory.textContainers.length - 1];
-					pagePositionMessage += localize({ en: "Overset text. Position of the last text frame: ", de: "Im Übersatz. Position des letzten Textrahmens: " });
+					if (object.parent.constructor.name == "XmlStory") {
+						return localize({ en: "XML Content", de: "In der XML Struktur" });
+					}
+					else {
+						object = object.parent.parentStory.textContainers[object.parentStory.textContainers.length - 1];
+						pagePositionMessage += localize({ en: "Overset text. Position of the last text frame: ", de: "Im Übersatz. Position des letzten Textrahmens: " });
+					}
 				}
 				else {
 					object = object.parentTextFrames[0];
@@ -118,6 +123,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			return pagePositionMessage + localize({ en: "Could not detect page", de: "Konnte Seite nicht ermitteln" });
 		}
 	}
+
 
 	INNER.writeLog = function (msg, severity, file) {
 		var date = new Date();
