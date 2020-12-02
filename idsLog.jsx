@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 1.18
-* @Date: 2020-05-20
+* @Version: 1.19
+* @Date: 2020-12-03
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
 
@@ -58,7 +58,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 						return localize({ en: "XML Content", de: "In der XML Struktur" });
 					}
 					else {
-						object = object.parent.parentStory.textContainers[object.parentStory.textContainers.length - 1];
+						object = object.parentStory.textContainers[object.parentStory.textContainers.length - 1];
 						pagePositionMessage += localize({ en: "Overset text. Position of the last text frame: ", de: "Im Übersatz. Position des letzten Textrahmens: " });
 					}
 				}
