@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 1.19
-* @Date: 2020-12-03
+* @Version: 1.20
+* @Date: 2021-01-17
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
 
@@ -201,7 +201,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 					dialogWin.close();
 				}
 			}
-			dialogWin.gControl.add("button", undefined, "Ok", { name: "ok" });
+			dialogWin.gControl.add("button", undefined, "Ok", { name: "ok", active: true });
 			dialogWin.show();
 		}
 	};
@@ -239,7 +239,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 				}
 			}
 			dialogWin.gControl.add("button", undefined, localize({ en: "Cancel", de: "Abbrechen" }), { name: "cancel" });
-			dialogWin.gControl.add("button", undefined, "Ok", { name: "ok" });
+			dialogWin.gControl.add("button", undefined, "Ok", { name: "ok", active:true });
 			return dialogWin.show();
 		}
 	};
@@ -289,15 +289,15 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 		return h + ':' + m + ':' + s + "." + ms;
 	};
 	/****************
-    * API 
-    */
+	* API 
+	*/
 
-    /**
-    * Returns a log Object
-    * @logFile {File|String} Path to logfile as File Object or String.
-    * @logLevel {String} Log Threshold  "OFF", "ERROR", "WARN", "INFO", "DEBUG"
-    * @disableAlerts {Boolean} Show alerts
-    */
+	/**
+	* Returns a log Object
+	* @logFile {File|String} Path to logfile as File Object or String.
+	* @logLevel {String} Log Threshold  "OFF", "ERROR", "WARN", "INFO", "DEBUG"
+	* @disableAlerts {Boolean} Show alerts
+	*/
 	SELF.getLogger = function (logFile, logLevel, disableAlerts) {
 		if (logFile == undefined) {
 			throw Error("Cannot instantiate Log without Logfile. Please provide a File");
