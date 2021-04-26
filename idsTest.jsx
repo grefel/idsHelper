@@ -199,7 +199,7 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 		}
 	};
 
-	SELF.assertGREPInDoc = function (message, findGrepPreferences, doc) {
+	SELF.assertGREPInDoc = function (message, findGrepPreferences, doc, hits) {
 		message = message + " <em>GREP-Suche <span class='code'>assertGREPInDoc</span></em>";
 		try {
 			// Save Options
@@ -233,12 +233,12 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 			if (app.findChangeGrepOptions.hasOwnProperty("searchBackwards")) app.findChangeGrepOptions.searchBackwards = saveFindGrepOptions.searchBackwards;
 
 
-			if (results == 0) {
-				INNER.testResults.push({ failed: true, message: message, result: "GREP: " + findGrepPreferences.toSource() });
-				if (INNER.consoleLog) $.writeln("Test: " + message + "\nExpected: " + expected + "\nActual: " + actual + "\n\n")
+			if (results == hits) {
+				INNER.testResults.push({ failed: false, message: message, result: "GREP: " + findGrepPreferences.toSource() + " expected: " + hits + " actual: " + results.length + " search results"});
 			}
 			else {
-				INNER.testResults.push({ failed: false, message: message, result: "GREP: " + findGrepPreferences.toSource() + " with " + results.length + " hits." });
+				INNER.testResults.push({ failed: true, message: message, result: "GREP: " + findGrepPreferences.toSource() + " expected: " + hits + " actual: " + results.length + " search results"});
+				if (INNER.consoleLog) $.writeln("Test: " + message + "\nGREP: " + findGrepPreferences.toSource() + " expected: " + hits + " actual: " + results.length + " search results" + "\n\n")
 			}
 		}
 		catch (e) {
