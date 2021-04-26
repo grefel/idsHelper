@@ -233,7 +233,7 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 			if (app.findChangeGrepOptions.hasOwnProperty("searchBackwards")) app.findChangeGrepOptions.searchBackwards = saveFindGrepOptions.searchBackwards;
 
 
-			if (results == expectedLength) {
+			if (results.length == expectedLength) {
 				INNER.testResults.push({ failed: false, message: message, result: "GREP: " + findGrepPreferences.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results"});
 			}
 			else {
@@ -287,7 +287,7 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 			app.findChangeObjectOptions.includeMasterPages = saveFindObjectOptions.includeMasterPages;
 			app.findChangeObjectOptions.objectType = saveFindObjectOptions.objectType;
 
-			if (results == expectedLength) {
+			if (results.length == expectedLength) {
 				INNER.testResults.push({ failed: false, message: message, result: "Object: " + findObjectPreferences.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results"});
 			}
 			else {
