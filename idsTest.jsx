@@ -384,7 +384,6 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 		htmlString += '<tr><td class="key">Version der Testsuite</td> 	<td class="value">' + INNER.testSuiteMeta.version + '</td></tr>';
 		htmlString += '<tr><td class="key">Getestetes Skript</td> 		<td class="value">' + INNER.testSuiteMeta.testScript + '</td></tr>';
 		htmlString += '<tr><td class="key">Version ' + INNER.testSuiteMeta.testScript + '</td> 	<td class="value">' + INNER.testSuiteMeta.testScriptVersion + '</td></tr>';
-		htmlString += '<tr><td class="key">git Commit ID ' + INNER.testSuiteMeta.testScript + '</td> 	<td class="value">' + 'TODO' + '</td></tr>';
 		// 'Start und Run Information ... Platform, Datum, Tests. Auswertnung... '
 		var date = new Date();
 		date = date.getFullYear() + "-" + pad(date.getMonth() + 1, 2) + "-" + pad(date.getDate(), 2) + " " + pad(date.getHours(), 2) + "-" + pad(date.getMinutes(), 2) + "-" + pad(date.getSeconds(), 2);
