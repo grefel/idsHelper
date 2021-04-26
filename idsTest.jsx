@@ -199,7 +199,7 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 		}
 	};
 
-	SELF.assertGREPInDoc = function (message, findGrepPreferences, doc, hits) {
+	SELF.assertGREPInDoc = function (message, findGrepPreferences, doc, expectedLength) {
 		message = message + " <em>GREP-Suche <span class='code'>assertGREPInDoc</span></em>";
 		try {
 			// Save Options
@@ -233,12 +233,12 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 			if (app.findChangeGrepOptions.hasOwnProperty("searchBackwards")) app.findChangeGrepOptions.searchBackwards = saveFindGrepOptions.searchBackwards;
 
 
-			if (results == hits) {
-				INNER.testResults.push({ failed: false, message: message, result: "GREP: " + findGrepPreferences.toSource() + " expected: " + hits + " actual: " + results.length + " search results"});
+			if (results == expectedLength) {
+				INNER.testResults.push({ failed: false, message: message, result: "GREP: " + findGrepPreferences.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results"});
 			}
 			else {
-				INNER.testResults.push({ failed: true, message: message, result: "GREP: " + findGrepPreferences.toSource() + " expected: " + hits + " actual: " + results.length + " search results"});
-				if (INNER.consoleLog) $.writeln("Test: " + message + "\nGREP: " + findGrepPreferences.toSource() + " expected: " + hits + " actual: " + results.length + " search results" + "\n\n")
+				INNER.testResults.push({ failed: true, message: message, result: "GREP: " + findGrepPreferences.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results"});
+				if (INNER.consoleLog) $.writeln("Test: " + message + "\nGREP: " + findGrepPreferences.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results" + "\n\n")
 			}
 		}
 		catch (e) {
@@ -287,14 +287,12 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 			app.findChangeObjectOptions.includeMasterPages = saveFindObjectOptions.includeMasterPages;
 			app.findChangeObjectOptions.objectType = saveFindObjectOptions.objectType;
 
-			if (results.length != expectedLength) {
-				INNER.testResults.push({ failed: true, message: message, result: "Object: " + findObjectPreferences.toSource() });
-				if (INNER.consoleLog) {
-					$.writeln("Test: " + message + "\nExpected: " + expectedLength + "\nActual: " + results.length + "\n\n");
-				}
+			if (results == expectedLength) {
+				INNER.testResults.push({ failed: false, message: message, result: "Object: " + findObjectPreferences.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results"});
 			}
 			else {
-				INNER.testResults.push({ failed: false, message: message, result: "Object: " + findObjectPreferences.toSource() + " with " + results.length + " hits." });
+				INNER.testResults.push({ failed: true, message: message, result: "Object: " + findObjectPreferences.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results"});
+				if (INNER.consoleLog) $.writeln("Test: " + message + "\nObject: " + findObjectPreferences.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results" + "\n\n")
 			}
 		}
 		catch (e) {
