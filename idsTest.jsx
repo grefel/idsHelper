@@ -19,7 +19,7 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 	// PRIVATE  
 	// =================================  
 	var INNER = {};
-	INNER.version = "2020-05-14--1.1"
+	INNER.version = "2021-04-26--1.2"
 
 	INNER.testResults = [];
 
