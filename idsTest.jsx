@@ -279,6 +279,8 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 
 			var results = doc.findObject();
 
+			app.findObjectPreferences = NothingEnum.NOTHING;
+
 			// Reset Options
 			app.findChangeObjectOptions.includeFootnotes = saveFindObjectOptions.includeFootnotes;
 			app.findChangeObjectOptions.includeHiddenLayers = saveFindObjectOptions.includeHiddenLayers;
