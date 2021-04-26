@@ -94,7 +94,7 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 	SELF.assertStringInFile = function (message, searchValue, file) {
 		message = message + " <em>String in Datei <span class='code'>assertStringInFile</span></em>" + " <span class='hint'><a target='_blank' rel='noopener noreferrer' href='file:///" + file.fsName + "'>" + file.name + "</a></span>";
 		if (!file.exists) {
-			INNER.testResults.push({ failed: true, message: message , result: "File does not exist" });
+			INNER.testResults.push({ failed: true, message: message, result: "File does not exist" });
 			return;
 		}
 		var string = INNER.readTextFile(file);
@@ -109,7 +109,7 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 	SELF.assertStringNotInFile = function (message, searchValue, file) {
 		message = message + " <em>String nicht in Datei <span class='code'>assertStringNotInFile</span></em>" + " <span class='hint'><a target='_blank' rel='noopener noreferrer' href='file:///" + file.fsName + "'>" + file.name + "</a></span>";
 		if (!file.exists) {
-			INNER.testResults.push({ failed: true, message: message , result: "File does not exist" });
+			INNER.testResults.push({ failed: true, message: message, result: "File does not exist" });
 			return;
 		}
 		var string = INNER.readTextFile(file);
@@ -124,7 +124,7 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 	SELF.assertRegExNotInFile = function (message, regex, file) {
 		message = message + " <em>RegEx nicht in Datei <span class='code'>assertRegExNotInFile</span></em>" + " <span class='hint'><a target='_blank' rel='noopener noreferrer' href='file:///" + file.fsName + "'>" + file.name + "</a></span>";
 		if (!file.exists) {
-			INNER.testResults.push({ failed: true, message: message , result: "File does not exist" });
+			INNER.testResults.push({ failed: true, message: message, result: "File does not exist" });
 			return;
 		}
 		var string = INNER.readTextFile(file);
@@ -139,12 +139,12 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 	SELF.assertRegExInFile = function (message, regex, file) {
 		message = message + " <em>RegEx in Datei <span class='code'>assertRegExInFile</span></em>" + " <span class='hint'><a target='_blank' rel='noopener noreferrer' href='file:///" + file.fsName + "'>" + file.name + "</a></span>";
 		if (!file.exists) {
-			INNER.testResults.push({ failed: true, message: message , result: "File does not exist" });
+			INNER.testResults.push({ failed: true, message: message, result: "File does not exist" });
 			return;
 		}
 		var string = INNER.readTextFile(file);
 		if (string.match(regex) != null) {
-			INNER.testResults.push({ failed: false, message: message, result: "RegEx: " + regex+ " Found: " + string.match(regex).join("<br/>") });
+			INNER.testResults.push({ failed: false, message: message, result: "RegEx: " + regex + " Found: " + string.match(regex).join("<br/>") });
 			if (INNER.consoleLog) $.writeln("Test: " + message + "\nFound: " + string.match(regex) + "\n\n")
 		}
 		else {
@@ -219,15 +219,15 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 			saveFindObjectOptions.includeLockedStoriesForFind = app.findChangeObjectOptions.includeLockedStoriesForFind;
 			saveFindObjectOptions.includeMasterPages = app.findChangeObjectOptions.includeMasterPages;
 			saveFindObjectOptions.objectType = app.findChangeObjectOptions.objectType;
-			
+
 			// Set Options
 			app.findChangeObjectOptions.includeFootnotes = true;
 			app.findChangeObjectOptions.includeHiddenLayers = true;
 			app.findChangeObjectOptions.includeLockedLayersForFind = false;
 			app.findChangeObjectOptions.includeLockedStoriesForFind = false;
 			app.findChangeObjectOptions.includeMasterPages = false;
-			app.findChangeObjectOptions.objectType = objectType; 
-			
+			app.findChangeObjectOptions.objectType = objectType;
+
 			app.findObjectPreferences = NothingEnum.NOTHING;
 			app.findObjectPreferences.properties = findObjectPreferences;
 
@@ -240,11 +240,11 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 			app.findChangeObjectOptions.includeLockedStoriesForFind = saveFindObjectOptions.includeLockedStoriesForFind;
 			app.findChangeObjectOptions.includeMasterPages = saveFindObjectOptions.includeMasterPages;
 			app.findChangeObjectOptions.objectType = saveFindObjectOptions.objectType;
-			
+
 			if (results.length != expectedLength) {
 				INNER.testResults.push({ failed: true, message: message, result: "Object: " + findObjectPreferences.toSource() });
-				if (INNER.consoleLog) { 
-					$.writeln("Test: " + message + "\nExpected: " + expectedLength + "\nActual: " + results.length + "\n\n"); 
+				if (INNER.consoleLog) {
+					$.writeln("Test: " + message + "\nExpected: " + expectedLength + "\nActual: " + results.length + "\n\n");
 				}
 			}
 			else {
@@ -267,9 +267,9 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 		message = message + " <em>Tabellen-Suche <span class='code'>assertTableInDoc</span></em>";
 
 		var findTextPreferences = {
-			findWhat:"<0016>"
+			findWhat: "<0016>"
 		};
-		
+
 		try {
 			// Save Options
 			var saveFindTextOptions = {};
@@ -308,7 +308,7 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 			if (app.findChangeTextOptions.hasOwnProperty("searchBackwards")) app.findChangeTextOptions.searchBackwards = saveFindTextOptions.searchBackwards;
 
 			/* Loop: Tables */
-			for (var i = results.length-1; i >=0 ; i--) {
+			for (var i = results.length - 1; i >= 0; i--) {
 
 				var curTableChar = results[i];
 				if (!curTableChar || !curTableChar.isValid) {
@@ -319,16 +319,16 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 				if (!curTable.isValid) {
 					continue;
 				}
-				
-				if(curTable.appliedTableStyle !== tableStyle) {
-					results.splice(i,1);
+
+				if (curTable.appliedTableStyle !== tableStyle) {
+					results.splice(i, 1);
 				}
 			}
 
 			if (results.length != expectedLength) {
 				INNER.testResults.push({ failed: true, message: message, result: "Table: " + findTextPreferences.toSource() + "; Tabellenformat: " + tableStyle.name });
-				if (INNER.consoleLog) { 
-					$.writeln("Test: " + message + "\nExpected: " + expectedLength + "\nActual: " + results.length + "\n\n"); 
+				if (INNER.consoleLog) {
+					$.writeln("Test: " + message + "\nExpected: " + expectedLength + "\nActual: " + results.length + "\n\n");
 				}
 			}
 			else {
@@ -397,7 +397,7 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 		else { // Server
 			appVersion += ' (Server)';
 		}
-		
+
 		htmlString += '<tr><td class="key">InDesign-Version</td>		<td class="value">' + appVersion + '</td></tr>';
 		htmlString += '<tr><td class="key">DOM-Version</td>			<td class="value">' + app.scriptPreferences.version + '</td></tr>';
 		htmlString += '</tbody></table>'
@@ -476,4 +476,4 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 	}
 
 
-})($.global, { toString: function () { return 'idsTesting'; } });  
+})($.global, { toString: function () { return 'idsTesting'; } });
