@@ -52,19 +52,17 @@ var idsTesting = function () {
 		var preflightResult = { status: "fail", message: "Could not run", items: [] };
 
 		if (!preflightProfileFile.exists) {
-			log.warn("Die Datei [" + preflightProfileFile + "] für das Preflight Profile existiert nicht!");
+			preflightResult.message = "Die Datei [" + preflightProfileFile + "] für das Preflight Profile existiert nicht!";
 			return preflightResult;
 		}
 
 		var preflightProfileName = preflightProfileFile.name.replace(/\.idpp$/, "");
-		log.info("Preflight Prüfung mit [" + preflightProfileName + "]");
 
 		var preflightProfile;
 		var updatePreflightProfile = preflightProfileFile.modified.getTime();
 		if ((app.extractLabel("px:updatePreflightProfileTime") * 1) < updatePreflightProfile) {
 			preflightProfile = app.preflightProfiles.itemByName(preflightProfileName);
 			if (preflightProfile.isValid) {
-				log.info("Ersetze Preflight-Profil [" + preflightProfileName + "] im Dokument, durch Daten aus Datei [" + preflightProfileFile + "]");
 				preflightProfile.remove();
 			}
 			app.loadPreflightProfile(preflightProfileFile);
@@ -73,7 +71,7 @@ var idsTesting = function () {
 
 		preflightProfile = app.preflightProfiles.itemByName(preflightProfileName);
 		if (!preflightProfile.isValid) {
-			log.warn("Das Preflight Profil [" + preflightProfileName + "] konnte nicht geladen werden. Es wurde kein Preflight ausgeführt!");
+			preflightResult.message = "Das Preflight Profil [" + preflightProfileName + "] konnte nicht geladen werden. Es wurde kein Preflight ausgeführt!";
 			return preflightResult;
 		}
 
