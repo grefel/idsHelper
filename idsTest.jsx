@@ -476,7 +476,7 @@ var idsTesting = function () {
 		 * @param {Boolean} includeMaster 
 		 * @returns {Boolean|Array} Result of assertion. If true, an Array with found tables
 		 */
-		assertTableInDoc: function (message, tableStyle, dok, expectedLength, includeMaster) {
+		assertTablesInDoc: function (message, tableStyle, dok, expectedLength, includeMaster) {
 			message = message + " <em>Tabellen-Suche <span class='code'>assertTableInDoc</span></em>";
 			try {
 				if (includeMaster == undefined) {
@@ -521,24 +521,27 @@ var idsTesting = function () {
 				app.findChangeTextOptions.includeMasterPages = saveFindTextOptions.includeMasterPages;
 				if (app.findChangeTextOptions.hasOwnProperty("searchBackwards")) app.findChangeTextOptions.searchBackwards = saveFindTextOptions.searchBackwards;
 
-				/* Loop: Tables */
+				var returnTables = [];
 				for (var i = results.length - 1; i >= 0; i--) {
 					var curTableChar = results[i];
 					if (!curTableChar || !curTableChar.isValid) {
 						continue;
 					}
-					var curTable = curTableChar.tables.firstItem();
+					var curTable = curTableChar.tables[0];
 					if (!curTable.isValid) {
 						continue;
 					}
-					if (curTable.appliedTableStyle !== tableStyle) {
+					if (curTable.appliedTableStyle === tableStyle) {
+						returnTables.push(curTable);
+					}
+					else {
 						results.splice(i, 1);
 					}
 				}
 
 				if (results.length == expectedLength) {
 					testResults.push({ failed: false, message: message, result: "Table: " + findTextPreferences.toSource() + " with " + results.length + " hits." });
-					return results;
+					return returnTables;
 				}
 				else {
 					testResults.push({ failed: true, message: message, result: "Table: " + findTextPreferences.toSource() + "; Tabellenformat: " + tableStyle.name });
