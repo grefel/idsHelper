@@ -6,13 +6,13 @@
 * Usage: 
 
 //[at]include ../idsTest.jsx
-idsTesting.insertBlock("Testing idsLog");  
-idsTesting.assertEquals("Message", true, "somethingToTest");  
-idsTesting.htmlReport();
+idsTest.insertBlock("Testing idsLog");  
+idsTest.assertEquals("Message", true, "somethingToTest");  
+idsTest.htmlReport();
 
 */
 
-var idsTesting = function () {
+var idsTest = function () {
 	// Private 
 	var version = "2021-04-27--1.2";
 	var meta = {
