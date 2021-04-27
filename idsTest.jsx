@@ -51,53 +51,70 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 			throw Error("This is not a File");
 		}
 	},
-	INNER.preflightDocument = function(dok, preflightProfileFile) {
-		var preflightResult = { status: "fail", message: "Could not run", items: [] };
+		INNER.preflightDocument = function (dok, preflightProfileFile) {
+			var preflightResult = { status: "fail", message: "Could not run", items: [] };
 
-		if (!preflightProfileFile.exists) {
-			log.warn("Die Datei [" + preflightProfileFile + "] für das Preflight Profile existiert nicht!");
-			return preflightResult;
-		}
-	
-		var preflightProfileName = preflightProfileFile.name.replace(/\.idpp$/, "");
-		log.info("Preflight Prüfung mit [" + preflightProfileName + "]");
-	
-		var preflightProfile;
-		var updatePreflightProfile = preflightProfileFile.modified.getTime();
-		if ((app.extractLabel("px:updatePreflightProfileTime") * 1) < updatePreflightProfile) {
-			preflightProfile = app.preflightProfiles.itemByName(preflightProfileName);
-			if (preflightProfile.isValid) {
-				log.info("Ersetze Preflight-Profil [" + preflightProfileName + "] im Dokument, durch Daten aus Datei [" + preflightProfileFile + "]");
-				preflightProfile.remove();
+			if (!preflightProfileFile.exists) {
+				log.warn("Die Datei [" + preflightProfileFile + "] für das Preflight Profile existiert nicht!");
+				return preflightResult;
 			}
-			app.loadPreflightProfile(preflightProfileFile);
-			app.insertLabel("px:updatePreflightProfileTime", updatePreflightProfile + "");
-		}
-	
-		preflightProfile = app.preflightProfiles.itemByName(preflightProfileName);
-		if (!preflightProfile.isValid) {
-			log.warn("Das Preflight Profil [" + preflightProfileName + "] konnte nicht geladen werden. Es wurde kein Preflight ausgeführt!");
+
+			var preflightProfileName = preflightProfileFile.name.replace(/\.idpp$/, "");
+			log.info("Preflight Prüfung mit [" + preflightProfileName + "]");
+
+			var preflightProfile;
+			var updatePreflightProfile = preflightProfileFile.modified.getTime();
+			if ((app.extractLabel("px:updatePreflightProfileTime") * 1) < updatePreflightProfile) {
+				preflightProfile = app.preflightProfiles.itemByName(preflightProfileName);
+				if (preflightProfile.isValid) {
+					log.info("Ersetze Preflight-Profil [" + preflightProfileName + "] im Dokument, durch Daten aus Datei [" + preflightProfileFile + "]");
+					preflightProfile.remove();
+				}
+				app.loadPreflightProfile(preflightProfileFile);
+				app.insertLabel("px:updatePreflightProfileTime", updatePreflightProfile + "");
+			}
+
+			preflightProfile = app.preflightProfiles.itemByName(preflightProfileName);
+			if (!preflightProfile.isValid) {
+				log.warn("Das Preflight Profil [" + preflightProfileName + "] konnte nicht geladen werden. Es wurde kein Preflight ausgeführt!");
+				return preflightResult;
+			}
+
+			// Preflight
+			var preflightProcess = app.preflightProcesses.add(dok, preflightProfile);
+			preflightProcess.waitForProcess();
+			preflightProcess.waitForProcess();
+			if (preflightProcess.processResults.indexOf("None") == 0) {
+				preflightResult.status = "pass";
+				preflightResult.message = "Preflight mit Profil [" + preflightProfileName + "] bestanden";
+				preflightResult.items = [];
+			}
+			else {
+				var results = preflightProcess.aggregatedResults;
+				preflightResult.status = "fail";
+				preflightResult.message = "Preflight mit Profil [" + preflightProfileName + "] nicht bestanden";
+				preflightResult.items = results;
+			}
+			preflightProcess.remove();
+
 			return preflightResult;
 		}
-	
-		// Preflight
-		var preflightProcess = app.preflightProcesses.add(dok, preflightProfile);
-		preflightProcess.waitForProcess();
-		preflightProcess.waitForProcess();
-		if (preflightProcess.processResults.indexOf("None") == 0) {
-			preflightResult.status = "pass";
-			preflightResult.message = "Preflight mit Profil [" + preflightProfileName + "] bestanden";
-			preflightResult.items = [];
+	INNER.cleanInDesignString = function (object) {
+		if (object.hasOwnProperty("parentStory")) {
+			var string = object.parentStory.contents;
+		}
+		else if (object.hasOwnProperty("baseline")) {
+			var string = object.contents;
+		}
+		else if (object.constructor.name == "String") {
+			var string = object;
 		}
 		else {
-			var results = preflightProcess.aggregatedResults;
-			preflightResult.status = "fail";
-			preflightResult.message = "Preflight mit Profil [" + preflightProfileName + "] nicht bestanden";
-			preflightResult.items = results;
+			var string = object.toString();
 		}
-		preflightProcess.remove();
-	
-		return preflightResult;
+		string = string.replace(/[\u0003\u0007\u0016\u0008]/g, ''); // <control> Character können raus
+		string = string.replace(/[\uFEFF\u0EFF]/g, ''); // InDesign Spezialzeichen entfernen 
+		return string;
 	}
 
 
@@ -118,7 +135,17 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 			INNER.testResults.push({ failed: false, message: message, result: "Expected: <strong>" + expected + "</strong> Actual: <strong>" + actual + "</strong>" });
 		}
 	};
-	SELF.assertString = function (message, expected, actual) {
+	/**
+	 * Assert two strings as equal
+	 * @param {String} message 
+	 * @param {String} expected 
+	 * @param {String|Object} actual 
+	 * @param {Boolean} clean Defaults to false, try to obtain string from InDesign object and clean all control characters
+	 */
+	SELF.assertString = function (message, expected, actual, clean) {
+		if (clean) {
+			actual = INNER.cleanInDesignString(actual);
+		}
 		message = message + " <em>Stringvergleich <span class='code'>assertString</span></em>";
 		if (expected !== actual) {
 			INNER.testResults.push({ failed: true, message: message, result: "Expected: <strong>" + expected + "</strong> Actual: <strong>" + actual + "</strong>" });
@@ -168,21 +195,6 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 			INNER.testResults.push({ failed: false, message: message, result: "searchValue: <strong>" + searchValue + "</strong>" });
 		}
 	};
-	SELF.assertRegExNotInFile = function (message, regex, file) {
-		message = message + " <em>RegEx nicht in Datei <span class='code'>assertRegExNotInFile</span></em>" + " <span class='hint'><a target='_blank' rel='noopener noreferrer' href='file:///" + file.fsName + "'>" + decodeURI(file.name) + "</a></span>";
-		if (!file.exists) {
-			INNER.testResults.push({ failed: true, message: message, result: "File does not exist" });
-			return;
-		}
-		var string = INNER.readTextFile(file);
-		if (string.match(regex)) {
-			INNER.testResults.push({ failed: true, message: message, result: "RegEx: " + regex + " Found: " + string.match(regex).join("<br/>") });
-			if (INNER.consoleLog) $.writeln("Test: " + message + "\nFound: " + string.match(regex) + "\n\n")
-		}
-		else {
-			INNER.testResults.push({ failed: false, message: message, result: "RegEx: <strong>" + regex + "</strong>" });
-		}
-	};
 	SELF.assertRegExInFile = function (message, regex, file) {
 		message = message + " <em>RegEx in Datei <span class='code'>assertRegExInFile</span></em>" + " <span class='hint'><a target='_blank' rel='noopener noreferrer' href='file:///" + file.fsName + "'>" + decodeURI(file.name) + "</a></span>";
 		if (!file.exists) {
@@ -198,7 +210,21 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 			INNER.testResults.push({ failed: true, message: message, result: "RegEx: <strong>" + regex + "</strong>" });
 		}
 	};
-
+	SELF.assertRegExNotInFile = function (message, regex, file) {
+		message = message + " <em>RegEx nicht in Datei <span class='code'>assertRegExNotInFile</span></em>" + " <span class='hint'><a target='_blank' rel='noopener noreferrer' href='file:///" + file.fsName + "'>" + decodeURI(file.name) + "</a></span>";
+		if (!file.exists) {
+			INNER.testResults.push({ failed: true, message: message, result: "File does not exist" });
+			return;
+		}
+		var string = INNER.readTextFile(file);
+		if (string.match(regex)) {
+			INNER.testResults.push({ failed: true, message: message, result: "RegEx: " + regex + " Found: " + string.match(regex).join("<br/>") });
+			if (INNER.consoleLog) $.writeln("Test: " + message + "\nFound: " + string.match(regex) + "\n\n")
+		}
+		else {
+			INNER.testResults.push({ failed: false, message: message, result: "RegEx: <strong>" + regex + "</strong>" });
+		}
+	};
 	SELF.assertGREPInDoc = function (message, findGrepPreferences, doc, expectedLength) {
 		message = message + " <em>GREP-Suche <span class='code'>assertGREPInDoc</span></em>";
 		try {
@@ -234,10 +260,10 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 
 
 			if (results.length == expectedLength) {
-				INNER.testResults.push({ failed: false, message: message, result: "GREP: " + findGrepPreferences.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results"});
+				INNER.testResults.push({ failed: false, message: message, result: "GREP: " + findGrepPreferences.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results" });
 			}
 			else {
-				INNER.testResults.push({ failed: true, message: message, result: "GREP: " + findGrepPreferences.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results"});
+				INNER.testResults.push({ failed: true, message: message, result: "GREP: " + findGrepPreferences.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results" });
 				if (INNER.consoleLog) $.writeln("Test: " + message + "\nGREP: " + findGrepPreferences.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results" + "\n\n")
 			}
 		}
@@ -290,10 +316,10 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 			app.findChangeObjectOptions.objectType = saveFindObjectOptions.objectType;
 
 			if (results.length == expectedLength) {
-				INNER.testResults.push({ failed: false, message: message, result: "Object: " + findObjectPreferences.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results"});
+				INNER.testResults.push({ failed: false, message: message, result: "Object: " + findObjectPreferences.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results" });
 			}
 			else {
-				INNER.testResults.push({ failed: true, message: message, result: "Object: " + findObjectPreferences.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results"});
+				INNER.testResults.push({ failed: true, message: message, result: "Object: " + findObjectPreferences.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results" });
 				if (INNER.consoleLog) $.writeln("Test: " + message + "\nObject: " + findObjectPreferences.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results" + "\n\n")
 			}
 		}
@@ -420,7 +446,7 @@ $.global.hasOwnProperty('idsTesting') || (function (HOST, SELF) {
 	 * @param {Document} doc
 	 * @param {String} expectedPageName Page name		(optional) (preflight panel –> main section -> last expanded row)
 	 * @param {String} expectedProblem 	Problem			(optional) (preflight panel –> info section -> problem)
-	 * @param {String} expectedDesc 		Description	(optional) (preflight panel –> main section -> last expanded row)
+	 * @param {String} expectedDesc 	Description		(optional) (preflight panel –> main section -> last expanded row)
 	 */
 	SELF.assertPreflightFail = function (message, preflightProfileFile, doc, expectedPageName, expectedProblem, expectedDesc) {
 
