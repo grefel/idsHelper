@@ -25,26 +25,24 @@ var idsTesting = function () {
 	var consoleLog = true;
 
 	var writeTextFile = function (htmlFile, string) {
-		try {
-			htmlFile.encoding = "UTF-8";
-			htmlFile.open("w");
-			htmlFile.write(string);
-			htmlFile.close();
-			return true;
-		} catch (e) {
-			return e
-		}
+		htmlFile.encoding = "UTF-8";
+		htmlFile.open("w");
+		htmlFile.write(string);
+		htmlFile.close();
+		return true;
 	};
-	var readTextFile = function (_file, _encoding) {
-		if (_file.constructor.name == "File" && _file.exists) {
+	var readTextFile = function (file, encoding) {
+		if (file.constructor.name == "File" && file.exists) {
 			try {
-				if (_encoding != undefined) _file.encoding = _encoding;
-				else _file.encoding = "UTF-8";
-				_file.open("r");
-				var _res = _file.read();
-				_file.close();
-				return _res;
-			} catch (e) { return e }
+				if (encoding != undefined) file.encoding = encoding;
+				else file.encoding = "UTF-8";
+				file.open("r");
+				var res = file.read();
+				file.close();
+				return res;
+			} catch (e) {
+				return e
+			}
 		}
 		else {
 			throw Error("This is not a File");
@@ -118,17 +116,29 @@ var idsTesting = function () {
 
 	// API  
 	return {
-		logToConsole: function (value) {
-			consoleLog = value;
-		},
+		/**
+		 * Assert two Parameters are equal
+		 * @param {String} message 
+		 * @param {Any} expected 
+		 * @param {Any} actual 
+		 * @returns {Boolean} Result of assertion
+		 */
 		assertEquals: function (message, expected, actual) {
 			message = message + " <em>Wertevergleich <span class='code'>assertEquals</span></em>";
-			if (expected !== actual) {
-				testResults.push({ failed: true, message: message, result: "Expected: <strong>" + expected + "</strong> Actual: <strong>" + actual + "</strong>" });
-				if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + expected + "\nActual: " + actual + "\n\n")
+			try {
+				if (expected !== actual) {
+					testResults.push({ failed: true, message: message, result: "Expected: <strong>" + expected + "</strong> Actual: <strong>" + actual + "</strong>" });
+					if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + expected + "\nActual: " + actual + "\n\n");
+					return true;
+				}
+				else {
+					testResults.push({ failed: false, message: message, result: "Expected: <strong>" + expected + "</strong> Actual: <strong>" + actual + "</strong>" });
+					return false;
+				}
 			}
-			else {
-				testResults.push({ failed: false, message: message, result: "Expected: <strong>" + expected + "</strong> Actual: <strong>" + actual + "</strong>" });
+			catch (e) {
+				testResults.push({ failed: true, message: message, result: "Error: " + e + " Line " + e.line });
+				return false;
 			}
 		},
 		/**
@@ -137,93 +147,199 @@ var idsTesting = function () {
 		 * @param {String} expected 
 		 * @param {String|Object} actual 
 		 * @param {Boolean} clean Defaults to false, try to obtain string from InDesign object and clean all control characters
+		 * @returns {Boolean} Result of assertion
 		 */
 		assertString: function (message, expected, actual, clean) {
-			if (clean) {
-				actual = cleanInDesignString(actual);
-			}
 			message = message + " <em>Stringvergleich <span class='code'>assertString</span></em>";
-			if (expected !== actual) {
-				testResults.push({ failed: true, message: message, result: "Expected: <strong>" + expected + "</strong> Actual: <strong>" + actual + "</strong>" });
-				if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + expected + "\nActual: " + actual + "\n\n")
+			try {
+
+				if (clean) {
+					actual = cleanInDesignString(actual);
+				}
+				if (expected !== actual) {
+					testResults.push({ failed: true, message: message, result: "Expected: <strong>" + expected + "</strong> Actual: <strong>" + actual + "</strong>" });
+					if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + expected + "\nActual: " + actual + "\n\n");
+					return true;
+				}
+				else {
+					testResults.push({ failed: false, message: message, result: "Expected: <strong>" + expected + "</strong> Actual: <strong>" + actual + "</strong>" });
+					return false;
+				}
 			}
-			else {
-				testResults.push({ failed: false, message: message, result: "Expected: <strong>" + expected + "</strong> Actual: <strong>" + actual + "</strong>" });
+			catch (e) {
+				testResults.push({ failed: true, message: message, result: "Error: " + e + " Line " + e.line });
+				return false;
 			}
 		},
-		assertRegEx: function (message, regex, actual) {
+		/**
+		 * Assert a Regular expression matches a String
+		 * @param {String} message 
+		 * @param {RegExp} regex 
+		 * @param {String} actual 
+		 * @param {Boolean} clean Defaults to false, try to obtain string from InDesign object and clean all control characters
+		 * @returns {Boolean} Result of assertion
+		 */
+		assertRegEx: function (message, regex, actual, clean) {
 			message = message + " <em>Regex Test <span class='code'>assertRegEx</span></em>";
-			if (!actual.match(regex)) {
-				testResults.push({ failed: true, message: message, result: "regex: " + regex });
-				if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + expected + "\nActual: " + actual + "\n\n")
+			try {
+				if (clean) {
+					actual = cleanInDesignString(actual);
+				}
+				if (!actual.match(regex)) {
+					testResults.push({ failed: true, message: message, result: "regex: " + regex });
+					if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + expected + "\nActual: " + actual + "\n\n");
+					return true;
+				}
+				else {
+					testResults.push({ failed: false, message: message, result: "regex: " + regex });
+					return false;
+				}
 			}
-			else {
-				testResults.push({ failed: false, message: message, result: "regex: " + regex });
+			catch (e) {
+				testResults.push({ failed: true, message: message, result: "Error: " + e + " Line " + e.line });
+				return false;
 			}
 		},
-		assertStringInFile: function (message, searchValue, file) {
+		/**
+		 * Asserts a String can be found in a Text file
+		 * @param {String} message 
+		 * @param {String} searchValue 
+		 * @param {File} file 
+		 * @param {String} encoding 
+		 * @returns {Boolean} Result of assertion
+		 */
+		assertStringInFile: function (message, searchValue, file, encoding) {
 			message = message + " <em>String in Datei <span class='code'>assertStringInFile</span></em>" + " <span class='hint'><a target='_blank' rel='noopener noreferrer' href='file:///" + file.fsName + "'>" + decodeURI(file.name) + "</a></span>";
-			if (!file.exists) {
-				testResults.push({ failed: true, message: message, result: "File does not exist" });
-				return;
+			try {
+				if (!file.exists) {
+					testResults.push({ failed: true, message: message, result: "File does not exist" });
+					return false;
+				}
+				var string = readTextFile(file, encoding);
+				if (string.indexOf(searchValue) == -1) {
+					testResults.push({ failed: true, message: message, result: "searchValue: <strong>" + searchValue + "</strong>" });
+					if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + expected + "\nActual: " + actual + "\n\n")
+					return true;
+				}
+				else {
+					testResults.push({ failed: false, message: message, result: "searchValue: <strong>" + searchValue + "</strong>" });
+					return false;
+				}
 			}
-			var string = readTextFile(file);
-			if (string.indexOf(searchValue) == -1) {
-				testResults.push({ failed: true, message: message, result: "searchValue: <strong>" + searchValue + "</strong>" });
-				if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + expected + "\nActual: " + actual + "\n\n")
-			}
-			else {
-				testResults.push({ failed: false, message: message, result: "searchValue: <strong>" + searchValue + "</strong>" });
+			catch (e) {
+				testResults.push({ failed: true, message: message, result: "Error: " + e + " Line " + e.line });
+				return false;
 			}
 		},
-		assertStringNotInFile: function (message, searchValue, file) {
+		/**
+		 * Asserts a String cannot be found in a Text file
+		 * @param {String} message 
+		 * @param {String} searchValue 
+		 * @param {File} file 
+		 * @param {String} encoding 
+		 * @returns {Boolean} Result of assertion
+		 */
+		assertStringNotInFile: function (message, searchValue, file, encoding) {
 			message = message + " <em>String nicht in Datei <span class='code'>assertStringNotInFile</span></em>" + " <span class='hint'><a target='_blank' rel='noopener noreferrer' href='file:///" + file.fsName + "'>" + decodeURI(file.name) + "</a></span>";
-			if (!file.exists) {
-				testResults.push({ failed: true, message: message, result: "File does not exist" });
-				return;
+			try {
+				if (!file.exists) {
+					testResults.push({ failed: true, message: message, result: "File does not exist" });
+					return false;
+				}
+				var string = readTextFile(file, encoding);
+				if (string.indexOf(searchValue) > -1) {
+					testResults.push({ failed: true, message: message, result: "searchValue: <strong>" + searchValue + "</strong>" });
+					if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + expected + "\nActual: " + actual + "\n\n");
+					return true;
+				}
+				else {
+					testResults.push({ failed: false, message: message, result: "searchValue: <strong>" + searchValue + "</strong>" });
+					return false;
+				}
 			}
-			var string = readTextFile(file);
-			if (string.indexOf(searchValue) > -1) {
-				testResults.push({ failed: true, message: message, result: "searchValue: <strong>" + searchValue + "</strong>" });
-				if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + expected + "\nActual: " + actual + "\n\n")
-			}
-			else {
-				testResults.push({ failed: false, message: message, result: "searchValue: <strong>" + searchValue + "</strong>" });
+			catch (e) {
+				testResults.push({ failed: true, message: message, result: "Error: " + e + " Line " + e.line });
+				return false;
 			}
 		},
-		assertRegExInFile: function (message, regex, file) {
+		/**
+		 * Asserts a Regular Expression matches the contents of a Text file
+		 * @param {String} message 
+		 * @param {String} regex 
+		 * @param {File} file 
+		 * @param {String} encoding 
+		 * @returns {Boolean} Result of assertion
+		 */
+		assertRegExInFile: function (message, regex, file, encoding) {
 			message = message + " <em>RegEx in Datei <span class='code'>assertRegExInFile</span></em>" + " <span class='hint'><a target='_blank' rel='noopener noreferrer' href='file:///" + file.fsName + "'>" + decodeURI(file.name) + "</a></span>";
-			if (!file.exists) {
-				testResults.push({ failed: true, message: message, result: "File does not exist" });
-				return;
+			try {
+				if (!file.exists) {
+					testResults.push({ failed: true, message: message, result: "File does not exist" });
+					return false;
+				}
+				var string = readTextFile(file, encoding);
+				if (string.match(regex) != null) {
+					testResults.push({ failed: false, message: message, result: "RegEx: " + regex + " Found: " + string.match(regex).join("<br/>") });
+					if (consoleLog) $.writeln("Test: " + message + "\nFound: " + string.match(regex) + "\n\n");
+					return true;
+				}
+				else {
+					testResults.push({ failed: true, message: message, result: "RegEx: <strong>" + regex + "</strong>" });
+					return false;
+				}
 			}
-			var string = readTextFile(file);
-			if (string.match(regex) != null) {
-				testResults.push({ failed: false, message: message, result: "RegEx: " + regex + " Found: " + string.match(regex).join("<br/>") });
-				if (consoleLog) $.writeln("Test: " + message + "\nFound: " + string.match(regex) + "\n\n")
-			}
-			else {
-				testResults.push({ failed: true, message: message, result: "RegEx: <strong>" + regex + "</strong>" });
+			catch (e) {
+				testResults.push({ failed: true, message: message, result: "Error: " + e + " Line " + e.line });
+				return false;
 			}
 		},
-		assertRegExNotInFile: function (message, regex, file) {
+		/**
+		 * Asserts a Regular Expression does not match the contents of a Text file
+		 * @param {String} message 
+		 * @param {String} regex 
+		 * @param {File} file 
+		 * @param {String} encoding 
+		 * @returns {Boolean} Result of assertion
+		 */
+		assertRegExNotInFile: function (message, regex, file, encoding) {
 			message = message + " <em>RegEx nicht in Datei <span class='code'>assertRegExNotInFile</span></em>" + " <span class='hint'><a target='_blank' rel='noopener noreferrer' href='file:///" + file.fsName + "'>" + decodeURI(file.name) + "</a></span>";
-			if (!file.exists) {
-				testResults.push({ failed: true, message: message, result: "File does not exist" });
-				return;
+			try {
+				if (!file.exists) {
+					testResults.push({ failed: true, message: message, result: "File does not exist" });
+					return false;
+				}
+				var string = readTextFile(file, encoding);
+				if (string.match(regex)) {
+					testResults.push({ failed: true, message: message, result: "RegEx: " + regex + " Found: " + string.match(regex).join("<br/>") });
+					if (consoleLog) $.writeln("Test: " + message + "\nFound: " + string.match(regex) + "\n\n")
+					return true;
+				}
+				else {
+					testResults.push({ failed: false, message: message, result: "RegEx: <strong>" + regex + "</strong>" });
+					return false;
+				}
 			}
-			var string = readTextFile(file);
-			if (string.match(regex)) {
-				testResults.push({ failed: true, message: message, result: "RegEx: " + regex + " Found: " + string.match(regex).join("<br/>") });
-				if (consoleLog) $.writeln("Test: " + message + "\nFound: " + string.match(regex) + "\n\n")
-			}
-			else {
-				testResults.push({ failed: false, message: message, result: "RegEx: <strong>" + regex + "</strong>" });
+			catch (e) {
+				testResults.push({ failed: true, message: message, result: "Error: " + e + " Line " + e.line });
+				return false;
 			}
 		},
-		assertGREPInDoc: function (message, findGrepPreferences, doc, expectedLength) {
+		/**
+		 * Assert that an expected number of GREP matches can be found in the document
+		 * @param {String} message 
+		 * @param {FindGrepPreference|String} find 
+		 * @param {Document} dok 
+		 * @param {Number} expectedLength 
+		 * @param {Boolean} includeMaster 
+		 * @returns {Boolean|Array} Result of assertion. If true, the the results of fingGrep()
+		 */
+		assertGREPInDoc: function (message, find, dok, expectedLength, includeMaster) {
 			message = message + " <em>GREP-Suche <span class='code'>assertGREPInDoc</span></em>";
 			try {
+				if (includeMaster == undefined) {
+					includeMaster = false;
+				}
+
 				// Save Options
 				var saveFindGrepOptions = {};
 				saveFindGrepOptions.includeFootnotes = app.findChangeGrepOptions.includeFootnotes;
@@ -238,47 +354,72 @@ var idsTesting = function () {
 				app.findChangeGrepOptions.includeHiddenLayers = true;
 				app.findChangeGrepOptions.includeLockedLayersForFind = false;
 				app.findChangeGrepOptions.includeLockedStoriesForFind = false;
-				app.findChangeGrepOptions.includeMasterPages = false;
+				app.findChangeGrepOptions.includeMasterPages = includeMaster;
 				if (app.findChangeGrepOptions.hasOwnProperty("searchBackwards")) app.findChangeGrepOptions.searchBackwards = false;
 
-				app.findGrepPreferences = NothingEnum.NOTHING;
-				app.findGrepPreferences.properties = findGrepPreferences;
-				var results = doc.findGrep();
+				// Reset Dialog
+				app.findGrepPreferences = NothingEnum.nothing;
 
+				try {
+					// Find Change operation
+					if (find.constructor.name == "String") {
+						app.findGrepPreferences.findWhat = find;
+					}
+					else {
+						app.findGrepPreferences.properties = find;
+					}
+					var results = null;
+					results = dok.findGrep(true);
+				}
+				catch (e) {
+					throw e;
+				}
+				finally {
+					// Reset Dialog
+					app.findGrepPreferences = NothingEnum.nothing;
 
-				// Reset Options
-				app.findChangeGrepOptions.includeFootnotes = saveFindGrepOptions.includeFootnotes;
-				app.findChangeGrepOptions.includeHiddenLayers = saveFindGrepOptions.includeHiddenLayers;
-				app.findChangeGrepOptions.includeLockedLayersForFind = saveFindGrepOptions.includeLockedLayersForFind;
-				app.findChangeGrepOptions.includeLockedStoriesForFind = saveFindGrepOptions.includeLockedStoriesForFind;
-				app.findChangeGrepOptions.includeMasterPages = saveFindGrepOptions.includeMasterPages;
-				if (app.findChangeGrepOptions.hasOwnProperty("searchBackwards")) app.findChangeGrepOptions.searchBackwards = saveFindGrepOptions.searchBackwards;
+					// Reset Options
+					app.findChangeGrepOptions.includeFootnotes = saveFindGrepOptions.includeFootnotes;
+					app.findChangeGrepOptions.includeHiddenLayers = saveFindGrepOptions.includeHiddenLayers;
+					app.findChangeGrepOptions.includeLockedLayersForFind = saveFindGrepOptions.includeLockedLayersForFind;
+					app.findChangeGrepOptions.includeLockedStoriesForFind = saveFindGrepOptions.includeLockedStoriesForFind;
+					app.findChangeGrepOptions.includeMasterPages = saveFindGrepOptions.includeMasterPages;
+					if (app.findChangeGrepOptions.hasOwnProperty("searchBackwards")) app.findChangeGrepOptions.searchBackwards = saveFindGrepOptions.searchBackwards;
+				}
 
 
 				if (results.length == expectedLength) {
-					testResults.push({ failed: false, message: message, result: "GREP: " + findGrepPreferences.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results" });
+					testResults.push({ failed: false, message: message, result: "GREP: " + find.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results" });
+					return results;
 				}
 				else {
-					testResults.push({ failed: true, message: message, result: "GREP: " + findGrepPreferences.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results" });
-					if (consoleLog) $.writeln("Test: " + message + "\nGREP: " + findGrepPreferences.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results" + "\n\n")
+					testResults.push({ failed: true, message: message, result: "GREP: " + find.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results" });
+					if (consoleLog) $.writeln("Test: " + message + "\nGREP: " + find.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results" + "\n\n")
+					return false;
 				}
 			}
 			catch (e) {
-				testResults.push({ failed: false, message: message, result: "Error: " + e });
+				testResults.push({ failed: true, message: message, result: "Error: " + e + " Line " + e.line });
+				return false;
 			}
 		},
-
 		/**
-		 * Objektsuche im Dokument
-		 * Objekttypen: 
-		 * ObjectTypes.ALL_FRAMES_TYPE
-		 * ObjectTypes.GRAPHIC_FRAMES_TYPE
-		 * ObjectTypes.TEXT_FRAMES_TYPE
-		 * ObjectTypes.UNASSIGNED_FRAMES_TYPE
+		 * Assert that an expected number of objects can be found in the document
+		 * @param {String} message 
+		 * @param {ObjectTypes} objectType  ObjectTypes.ALL_FRAMES_TYPE, ObjectTypes.GRAPHIC_FRAMES_TYPE, ObjectTypes.TEXT_FRAMES_TYPE, ObjectTypes.UNASSIGNED_FRAMES_TYPE
+		 * @param {FindObjectPreference} findObjectPreferences 
+		 * @param {Document} dok 
+		 * @param {Number} expectedLength 
+		 * @param {Boolean} includeMaster 
+		 * @returns {Boolean|Array} Result of assertion. If true, the the results of findObject()
 		 */
-		assertObjectInDoc: function (message, objectType, findObjectPreferences, doc, expectedLength) {
+		assertObjectInDoc: function (message, objectType, findObjectPreferences, dok, expectedLength, includeMaster) {
 			message = message + " <em>Objekt-Suche <span class='code'>assertObjectInDoc</span></em>";
 			try {
+				if (includeMaster == undefined) {
+					includeMaster = false;
+				}
+
 				// Save Options
 				var saveFindObjectOptions = {};
 				saveFindObjectOptions.includeFootnotes = app.findChangeObjectOptions.includeFootnotes;
@@ -293,13 +434,13 @@ var idsTesting = function () {
 				app.findChangeObjectOptions.includeHiddenLayers = true;
 				app.findChangeObjectOptions.includeLockedLayersForFind = false;
 				app.findChangeObjectOptions.includeLockedStoriesForFind = false;
-				app.findChangeObjectOptions.includeMasterPages = false;
+				app.findChangeObjectOptions.includeMasterPages = includeMaster;
 				app.findChangeObjectOptions.objectType = objectType;
 
 				app.findObjectPreferences = NothingEnum.NOTHING;
 				app.findObjectPreferences.properties = findObjectPreferences;
 
-				var results = doc.findObject();
+				var results = dok.findObject();
 
 				app.findObjectPreferences = NothingEnum.NOTHING;
 
@@ -313,32 +454,37 @@ var idsTesting = function () {
 
 				if (results.length == expectedLength) {
 					testResults.push({ failed: false, message: message, result: "Object: " + findObjectPreferences.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results" });
+					return results;
 				}
 				else {
 					testResults.push({ failed: true, message: message, result: "Object: " + findObjectPreferences.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results" });
 					if (consoleLog) $.writeln("Test: " + message + "\nObject: " + findObjectPreferences.toSource() + " expected: " + expectedLength + " actual: " + results.length + " search results" + "\n\n")
+					return false;
 				}
 			}
 			catch (e) {
-				testResults.push({ failed: false, message: message, result: "Error: " + e });
+				testResults.push({ failed: true, message: message, result: "Error: " + e + " Line " + e.line });
+				return false;
 			}
 		},
-
 		/**
-		 * Tabellensuche in Dokument
+		 * Assert that an expected number of tables identified by a tablestyle can be found in the document
 		 * @param {String} message
 		 * @param {TableStyle} tableStyle - Tabellenformat der gesuchten Tabelle
-		 * @param {Document} doc
+		 * @param {Document} dok
 		 * @param {Number} expectedLength - Erwartete Anzahl an Tabellen 
+		 * @param {Boolean} includeMaster 
+		 * @returns {Boolean|Array} Result of assertion. If true, an Array with found tables
 		 */
-		assertTableInDoc: function (message, tableStyle, doc, expectedLength) {
+		assertTableInDoc: function (message, tableStyle, dok, expectedLength, includeMaster) {
 			message = message + " <em>Tabellen-Suche <span class='code'>assertTableInDoc</span></em>";
-
-			var findTextPreferences = {
-				findWhat: "<0016>"
-			};
-
 			try {
+				if (includeMaster == undefined) {
+					includeMaster = false;
+				}
+				var findTextPreferences = {
+					findWhat: "<0016>"
+				};
 				// Save Options
 				var saveFindTextOptions = {};
 				saveFindTextOptions.caseSensitive = app.findChangeTextOptions.caseSensitive;
@@ -357,13 +503,13 @@ var idsTesting = function () {
 				app.findChangeTextOptions.includeHiddenLayers = true;
 				app.findChangeTextOptions.includeLockedLayersForFind = false;
 				app.findChangeTextOptions.includeLockedStoriesForFind = false;
-				app.findChangeTextOptions.includeMasterPages = false;
+				app.findChangeTextOptions.includeMasterPages = includeMaster;
 				if (app.findChangeTextOptions.hasOwnProperty("searchBackwards")) { app.findChangeTextOptions.searchBackwards = false; }
 
 				app.findTextPreferences = NothingEnum.NOTHING;
 				app.findTextPreferences.properties = findTextPreferences;
 
-				var results = doc.findText();
+				var results = dok.findText();
 
 				// Reset Options
 				app.findChangeTextOptions.caseSensitive = saveFindTextOptions.caseSensitive;
@@ -377,143 +523,174 @@ var idsTesting = function () {
 
 				/* Loop: Tables */
 				for (var i = results.length - 1; i >= 0; i--) {
-
 					var curTableChar = results[i];
 					if (!curTableChar || !curTableChar.isValid) {
 						continue;
 					}
-
 					var curTable = curTableChar.tables.firstItem();
 					if (!curTable.isValid) {
 						continue;
 					}
-
 					if (curTable.appliedTableStyle !== tableStyle) {
 						results.splice(i, 1);
 					}
 				}
 
-				if (results.length != expectedLength) {
-					testResults.push({ failed: true, message: message, result: "Table: " + findTextPreferences.toSource() + "; Tabellenformat: " + tableStyle.name });
-					if (consoleLog) {
-						$.writeln("Test: " + message + "\nExpected: " + expectedLength + "\nActual: " + results.length + "\n\n");
-					}
+				if (results.length == expectedLength) {
+					testResults.push({ failed: false, message: message, result: "Table: " + findTextPreferences.toSource() + " with " + results.length + " hits." });
+					return results;
 				}
 				else {
-					testResults.push({ failed: false, message: message, result: "Table: " + findTextPreferences.toSource() + " with " + results.length + " hits." });
+					testResults.push({ failed: true, message: message, result: "Table: " + findTextPreferences.toSource() + "; Tabellenformat: " + tableStyle.name });
+					if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + expectedLength + "\nActual: " + results.length + "\n\n");
+					return false;
 				}
 			}
 			catch (e) {
-				testResults.push({ failed: false, message: message, result: "Error: " + e });
+				testResults.push({ failed: true, message: message, result: "Error: " + e + " Line " + e.line });
+				return false;
 			}
 		},
-
 		/**
-		 * InDesign Preflight Pass
+		 * Assert that InDesign Preflight Pass
 		 * @param {String} message
 		 * @param {File} preflightProfileFile
-		 * @param {Document} doc
+		 * @param {Document} dok
+		 * @returns {Boolean} Result of assertion
 		 */
-		assertPreflightPass: function (message, preflightProfileFile, doc) {
-
+		assertPreflightPass: function (message, preflightProfileFile, dok) {
 			message = message + " <em>Preflight bestanden <span class='code'>assertPreflightPass</span></em>";
+			try {
+				var preflightResultObj = preflightDocument(dok, preflightProfileFile);
+				var preflightStatus = preflightResultObj.status;
+				var preflightMessage = preflightResultObj.message;
+				var preflightArray = preflightResultObj.items;
 
-			var preflightResultObj = preflightDocument(doc, preflightProfileFile);
-			var preflightStatus = preflightResultObj.status;
-			var preflightMessage = preflightResultObj.message;
-			var preflightArray = preflightResultObj.items;
+				var preflightMessageString = "<strong>Preflight Message:</strong> " + preflightMessage;
+				var preflightResultString = "<strong>Preflight Result:</strong> " + preflightArray.toSource();
 
-			var preflightMessageString = "<strong>Preflight Message:</strong> " + preflightMessage;
-			var preflightResultString = "<strong>Preflight Result:</strong> " + preflightArray.toSource();
-
-			if (preflightStatus === 'pass') {
-				testResults.push({ failed: false, message: message, result: preflightMessageString });
+				if (preflightStatus === 'pass') {
+					testResults.push({ failed: false, message: message, result: preflightMessageString });
+					return true;
+				}
+				else {
+					testResults.push({ failed: true, message: message, result: preflightMessageString + "; " + preflightResultString });
+					if (consoleLog) $.writeln("Test: " + message + "\nPreflight Message: " + preflightMessage + "\nPreflight result: " + preflightResultString + "\n\n");
+					return false;
+				}
 			}
-			else {
-				testResults.push({ failed: true, message: message, result: preflightMessageString + "; " + preflightResultString });
-				if (consoleLog) $.writeln("Test: " + message + "\nPreflight Message: " + preflightMessage + "\nPreflight result: " + preflightResultString + "\n\n");
+			catch (e) {
+				testResults.push({ failed: true, message: message, result: "Error: " + e + " Line " + e.line });
+				return false;
 			}
 		},
-
 		/**
-		 * InDesign Preflight Fail
+		 * Assert that InDesign Preflight Fail for a specific reason
 		 * @param {String} message
 		 * @param {File} preflightProfileFile
-		 * @param {Document} doc
+		 * @param {Document} dok
 		 * @param {String} expectedPageName Page name		(optional) (preflight panel –> main section -> last expanded row)
 		 * @param {String} expectedProblem 	Problem			(optional) (preflight panel –> info section -> problem)
 		 * @param {String} expectedDesc 	Description		(optional) (preflight panel –> main section -> last expanded row)
+		 * @returns {Boolean} Result of assertion
 		 */
-		assertPreflightFail: function (message, preflightProfileFile, doc, expectedPageName, expectedProblem, expectedDesc) {
-
+		assertPreflightFail: function (message, preflightProfileFile, dok, expectedPageName, expectedProblem, expectedDesc) {
 			message = message + " <em>Preflight nicht bestanden <span class='code'>assertPreflightFail</span></em>";
+			try {
 
-			var preflightResultObj = preflightDocument(doc, preflightProfileFile);
-			var preflightStatus = preflightResultObj.status;
-			var preflightMessage = preflightResultObj.message;
-			var preflightArray = preflightResultObj.items;
 
-			expectedPageName = expectedPageName && expectedPageName.toString() || "";
-			expectedProblem = expectedProblem && expectedProblem.toString() || "";
-			expectedDesc = expectedDesc && expectedDesc.toString() || "";
+				var preflightResultObj = preflightDocument(dok, preflightProfileFile);
+				var preflightStatus = preflightResultObj.status;
+				var preflightMessage = preflightResultObj.message;
+				var preflightArray = preflightResultObj.items;
 
-			var escapeCharsRegExp = new RegExp("([.*+?()[\\]{}\\^$|\\~\\\\])", "g");
-			expectedProblem = expectedProblem.replace(escapeCharsRegExp, "\\$1");
+				expectedPageName = expectedPageName && expectedPageName.toString() || "";
+				expectedProblem = expectedProblem && expectedProblem.toString() || "";
+				expectedDesc = expectedDesc && expectedDesc.toString() || "";
 
-			var expectedProblemRegExp = new RegExp(expectedProblem, "ig");
+				var escapeCharsRegExp = new RegExp("([.*+?()[\\]{}\\^$|\\~\\\\])", "g");
+				expectedProblem = expectedProblem.replace(escapeCharsRegExp, "\\$1");
 
-			var testPassed = false;
+				var expectedProblemRegExp = new RegExp(expectedProblem, "ig");
 
-			if (preflightStatus === 'fail') {
-				if (preflightArray.length > 2) {
-					var resultArray = preflightArray[2];
-					for (var i = 0; i < resultArray.length; i++) {
-						var id = resultArray[i][0];
-						var desc = resultArray[i][1];
-						var pageName = resultArray[i][2];
-						var problem = resultArray[i][3];
-						if (
-							(expectedPageName === "" || pageName === expectedPageName) &&
-							(expectedProblem === "" || expectedProblemRegExp.test(problem)) &&
-							(expectedDesc === "" || desc === expectedDesc)
-						) {
-							testPassed = true;
-							break;
+				var testPassed = false;
+
+				if (preflightStatus === 'fail') {
+					if (preflightArray.length > 2) {
+						var resultArray = preflightArray[2];
+						for (var i = 0; i < resultArray.length; i++) {
+							var id = resultArray[i][0];
+							var desc = resultArray[i][1];
+							var pageName = resultArray[i][2];
+							var problem = resultArray[i][3];
+							if (
+								(expectedPageName === "" || pageName === expectedPageName) &&
+								(expectedProblem === "" || expectedProblemRegExp.test(problem)) &&
+								(expectedDesc === "" || desc === expectedDesc)
+							) {
+								testPassed = true;
+								break;
+							}
 						}
 					}
 				}
-			}
 
-			var preflightMessageString = "";
-			if (expectedProblem) {
-				preflightMessageString += "<strong>Expected Problem:</strong> " + expectedProblem + "; ";
-			}
-			if (expectedPageName) {
-				preflightMessageString += "<strong>Expected Page:</strong> " + expectedPageName + "; ";
-			}
-			if (expectedDesc) {
-				preflightMessageString += "<strong>Expected Description:</strong> " + expectedDesc + "; ";
-			}
-			preflightMessageString += "<strong>Preflight Message:</strong> " + preflightMessage;
+				var preflightMessageString = "";
+				if (expectedProblem) {
+					preflightMessageString += "<strong>Expected Problem:</strong> " + expectedProblem + "; ";
+				}
+				if (expectedPageName) {
+					preflightMessageString += "<strong>Expected Page:</strong> " + expectedPageName + "; ";
+				}
+				if (expectedDesc) {
+					preflightMessageString += "<strong>Expected Description:</strong> " + expectedDesc + "; ";
+				}
+				preflightMessageString += "<strong>Preflight Message:</strong> " + preflightMessage;
 
-			var preflightResultString = "<strong>Preflight Result:</strong> " + preflightArray.toSource();
+				var preflightResultString = "<strong>Preflight Result:</strong> " + preflightArray.toSource();
 
-			if (!testPassed) {
-				testResults.push({ failed: true, message: message, result: preflightMessageString + "; " + preflightResultString });
-				if (consoleLog) $.writeln("Test: " + message + "\nPreflight Message: " + preflightMessageString + "\nPreflight result: " + preflightResultString + "\n\n");
+				if (!testPassed) {
+					testResults.push({ failed: true, message: message, result: preflightMessageString + "; " + preflightResultString });
+					if (consoleLog) $.writeln("Test: " + message + "\nPreflight Message: " + preflightMessageString + "\nPreflight result: " + preflightResultString + "\n\n");
+					return true;
+				}
+				else {
+					testResults.push({ failed: false, message: message, result: preflightMessageString + "; " + preflightResultString });
+					return false;
+				}
 			}
-			else {
-				testResults.push({ failed: false, message: message, result: preflightMessageString + "; " + preflightResultString });
+			catch (e) {
+				testResults.push({ failed: true, message: message, result: "Error: " + e + " Line " + e.line });
+				return false;
 			}
 		},
-
-
+		/**
+		 * Set the Meta-Data for the test run
+		 * @param {Object} testSuiteMeta 
+		 */
+		setMeta: function (testSuiteMeta) {
+			testSuiteMeta = testSuiteMeta;
+		},
+		/**
+		 * Write failed test to console $.writeln()
+		 * @param {Boolean} value 
+		 */
+		logToConsole: function (value) {
+			consoleLog = value;
+		},
+		/**
+		 * Inserts an info Block into the test result list
+		 * @param {String} message 
+		 * @param {String} info 
+		 */
 		insertBlock: function (message, info) {
 			testResults.push({ failed: "block", "message": message, "result": info });
 		},
+		/**
+		 * Writes a HTML Test Report to a file
+		 * @param {File} htmlFile 
+		 */
 		htmlReport: function (htmlFile) {
-
-
 			var htmlString = '<html><head><meta charset="utf-8"><title>Testresults</title><style>' +
 				'body 		 { font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif;  }' +
 				// '.infoBlock  { background-color:  #ccc; padding: 6px; margin: 6px 0 6px 0 } '+ 
@@ -632,9 +809,6 @@ var idsTesting = function () {
 
 			writeTextFile(htmlFile, htmlString);
 			htmlFile.execute();
-		},
-		setMeta: function (testSuiteMeta) {
-			testSuiteMeta = testSuiteMeta;
 		}
 	};
 }();
