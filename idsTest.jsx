@@ -126,13 +126,13 @@ var idsTesting = function () {
 		assertEquals: function (message, expected, actual) {
 			message = message + " <em>Wertevergleich <span class='code'>assertEquals</span></em>";
 			try {
-				if (expected !== actual) {
-					testResults.push({ failed: true, message: message, result: "Expected: <strong>" + expected + "</strong> Actual: <strong>" + actual + "</strong>" });
-					if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + expected + "\nActual: " + actual + "\n\n");
+				if (expected === actual) {
+					testResults.push({ failed: false, message: message, result: "Expected: <strong>" + expected + "</strong> Actual: <strong>" + actual + "</strong>" });
 					return true;
 				}
 				else {
-					testResults.push({ failed: false, message: message, result: "Expected: <strong>" + expected + "</strong> Actual: <strong>" + actual + "</strong>" });
+					testResults.push({ failed: true, message: message, result: "Expected: <strong>" + expected + "</strong> Actual: <strong>" + actual + "</strong>" });
+					if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + expected + "\nActual: " + actual + "\n\n");
 					return false;
 				}
 			}
@@ -156,13 +156,13 @@ var idsTesting = function () {
 				if (clean) {
 					actual = cleanInDesignString(actual);
 				}
-				if (expected !== actual) {
-					testResults.push({ failed: true, message: message, result: "Expected: <strong>" + expected + "</strong> Actual: <strong>" + actual + "</strong>" });
-					if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + expected + "\nActual: " + actual + "\n\n");
+				if (expected === actual) {
+					testResults.push({ failed: false, message: message, result: "Expected: <strong>" + expected + "</strong> Actual: <strong>" + actual + "</strong>" });
 					return true;
 				}
 				else {
-					testResults.push({ failed: false, message: message, result: "Expected: <strong>" + expected + "</strong> Actual: <strong>" + actual + "</strong>" });
+					testResults.push({ failed: true, message: message, result: "Expected: <strong>" + expected + "</strong> Actual: <strong>" + actual + "</strong>" });
+					if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + expected + "\nActual: " + actual + "\n\n");
 					return false;
 				}
 			}
@@ -185,13 +185,13 @@ var idsTesting = function () {
 				if (clean) {
 					actual = cleanInDesignString(actual);
 				}
-				if (!actual.match(regex)) {
-					testResults.push({ failed: true, message: message, result: "regex: " + regex });
-					if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + expected + "\nActual: " + actual + "\n\n");
+				if (actual.match(regex)) {
+					testResults.push({ failed: false, message: message, result: "regex: " + regex });
 					return true;
 				}
 				else {
-					testResults.push({ failed: false, message: message, result: "regex: " + regex });
+					testResults.push({ failed: true, message: message, result: "regex: " + regex });
+					if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + expected + "\nActual: " + actual + "\n\n");
 					return false;
 				}
 			}
@@ -216,13 +216,13 @@ var idsTesting = function () {
 					return false;
 				}
 				var string = readTextFile(file, encoding);
-				if (string.indexOf(searchValue) == -1) {
-					testResults.push({ failed: true, message: message, result: "searchValue: <strong>" + searchValue + "</strong>" });
-					if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + expected + "\nActual: " + actual + "\n\n")
+				if (string.indexOf(searchValue) > -1) {
+					testResults.push({ failed: false, message: message, result: "searchValue: <strong>" + searchValue + "</strong>" });
 					return true;
 				}
 				else {
-					testResults.push({ failed: false, message: message, result: "searchValue: <strong>" + searchValue + "</strong>" });
+					testResults.push({ failed: true, message: message, result: "searchValue: <strong>" + searchValue + "</strong>" });
+					if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + expected + "\nActual: " + actual + "\n\n")
 					return false;
 				}
 			}
@@ -247,13 +247,13 @@ var idsTesting = function () {
 					return false;
 				}
 				var string = readTextFile(file, encoding);
-				if (string.indexOf(searchValue) > -1) {
-					testResults.push({ failed: true, message: message, result: "searchValue: <strong>" + searchValue + "</strong>" });
-					if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + expected + "\nActual: " + actual + "\n\n");
+				if (string.indexOf(searchValue) == -1) {
+					testResults.push({ failed: false, message: message, result: "searchValue: <strong>" + searchValue + "</strong>" });
 					return true;
 				}
 				else {
-					testResults.push({ failed: false, message: message, result: "searchValue: <strong>" + searchValue + "</strong>" });
+					testResults.push({ failed: true, message: message, result: "searchValue: <strong>" + searchValue + "</strong>" });
+					if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + expected + "\nActual: " + actual + "\n\n");
 					return false;
 				}
 			}
@@ -279,12 +279,12 @@ var idsTesting = function () {
 				}
 				var string = readTextFile(file, encoding);
 				if (string.match(regex) != null) {
-					testResults.push({ failed: false, message: message, result: "RegEx: " + regex + " Found: " + string.match(regex).join("<br/>") });
-					if (consoleLog) $.writeln("Test: " + message + "\nFound: " + string.match(regex) + "\n\n");
+					testResults.push({ failed: true, message: message, result: "RegEx: <strong>" + regex + "</strong>" });
 					return true;
 				}
 				else {
-					testResults.push({ failed: true, message: message, result: "RegEx: <strong>" + regex + "</strong>" });
+					testResults.push({ failed: false, message: message, result: "RegEx: " + regex + " Found: " + string.match(regex).join("<br/>") });
+					if (consoleLog) $.writeln("Test: " + message + "\nFound: " + string.match(regex) + "\n\n");
 					return false;
 				}
 			}
@@ -309,13 +309,13 @@ var idsTesting = function () {
 					return false;
 				}
 				var string = readTextFile(file, encoding);
-				if (string.match(regex)) {
-					testResults.push({ failed: true, message: message, result: "RegEx: " + regex + " Found: " + string.match(regex).join("<br/>") });
-					if (consoleLog) $.writeln("Test: " + message + "\nFound: " + string.match(regex) + "\n\n")
+				if (string.match(regex) == null) {
+					testResults.push({ failed: false, message: message, result: "RegEx: <strong>" + regex + "</strong>" });
 					return true;
 				}
 				else {
-					testResults.push({ failed: false, message: message, result: "RegEx: <strong>" + regex + "</strong>" });
+					testResults.push({ failed: true, message: message, result: "RegEx: " + regex + " Found: " + string.match(regex).join("<br/>") });
+					if (consoleLog) $.writeln("Test: " + message + "\nFound: " + string.match(regex) + "\n\n")
 					return false;
 				}
 			}
