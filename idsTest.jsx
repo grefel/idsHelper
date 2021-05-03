@@ -778,7 +778,7 @@ var idsTest = function () {
 			htmlString += '<h3 class="failed">Tests fehlgeschlagen: ' + failedCounter + '</h3>';
 
 			htmlString += '<h3 class="passed">Tests bestanden: ' + passedCounter + ' ';
-			htmlString += '<button class="togglePassed" onclick="toggleView()">Toggle display</button></h3>';
+			htmlString += '<button class="togglePassed" onclick="toggleView()">Togle display</button></h3>';
 
 			htmlString += '</div>';
 
