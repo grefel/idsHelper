@@ -277,12 +277,12 @@ var idsTest = function () {
 				}
 				var string = readTextFile(file, encoding);
 				if (string.match(regex) != null) {
-					testResults.push({ failed: true, message: message, result: "RegEx: <strong>" + regex + "</strong>" });
-					return true;
-				}
-				else {
 					testResults.push({ failed: false, message: message, result: "RegEx: " + regex + " Found: " + string.match(regex).join("<br/>") });
 					if (consoleLog) $.writeln("Test: " + message + "\nFound: " + string.match(regex) + "\n\n");
+					return false;
+				}
+				else {
+					testResults.push({ failed: true, message: message, result: "RegEx: <strong>" + regex + "</strong>" });
 					return false;
 				}
 			}
@@ -778,7 +778,7 @@ var idsTest = function () {
 			htmlString += '<h3 class="failed">Tests fehlgeschlagen: ' + failedCounter + '</h3>';
 
 			htmlString += '<h3 class="passed">Tests bestanden: ' + passedCounter + ' ';
-			htmlString += '<button class="togglePassed" onclick="toggleView()">Togle display</button></h3>';
+			htmlString += '<button class="togglePassed" onclick="toggleView()">Toggle display</button></h3>';
 
 			htmlString += '</div>';
 
