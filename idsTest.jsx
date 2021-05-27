@@ -277,12 +277,12 @@ var idsTest = function () {
 				}
 				var string = readTextFile(file, encoding);
 				if (string.match(regex) != null) {
-					testResults.push({ failed: true, message: message, result: "RegEx: <strong>" + regex + "</strong>" });
-					return true;
-				}
-				else {
 					testResults.push({ failed: false, message: message, result: "RegEx: " + regex + " Found: " + string.match(regex).join("<br/>") });
 					if (consoleLog) $.writeln("Test: " + message + "\nFound: " + string.match(regex) + "\n\n");
+					return false;
+				}
+				else {
+					testResults.push({ failed: true, message: message, result: "RegEx: <strong>" + regex + "</strong>" });
 					return false;
 				}
 			}
