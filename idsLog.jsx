@@ -3,7 +3,7 @@
 * @Version: 1.20
 * @Date: 2021-01-17
 * @Author: Gregor Fellenz, http://www.publishingx.de
-* Acknowledgments: Library design pattern from Marc Aturet https://forums.adobe.com/thread/1111415
+* Acknowledgments: Library design pattern from Marc Autret https://forums.adobe.com/thread/1111415
 
 * Usage: 
 
