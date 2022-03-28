@@ -1,13 +1,13 @@
 ﻿/****************
 * Logging Class 
-* @Version: 1.20
-* @Date: 2021-01-17
+* @Version: 1.21
+* @Date: 2022-03-28
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Autret https://forums.adobe.com/thread/1111415
 
 * Usage: 
 
-log = idsLog.getLogger("~/Desktop/testLog.txt", "INFO");
+log = idsLog.getLogger(File("~/Desktop/testLog.txt"), "INFO");
 log.warnAlert("Warn message");
 
 */
@@ -245,11 +245,9 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			return dialogWin.show();
 		}
 	};
-
 	INNER.confirm = function (message, noAsDefault, title) {
 		return confirm(message, noAsDefault, title);
-	}
-
+	};
 	INNER.getFileFilter = function (fileFilter) {
 		if (fileFilter == undefined || File.fs == "Windows") {
 			return fileFilter;
@@ -268,7 +266,6 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			}
 		}
 	};
-
 	INNER.msToTime = function (microseconds) {
 		var milliseconds = microseconds / 1000;
 		var ms = parseInt((milliseconds % 1000) / 100)
@@ -384,7 +381,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 					INNER.writeLog(message, "INFO", logFile);
 					counter.info++;
 					messages.info.push(message);
-					messages.all.push(message);
+					messages.all.push("INFO: " + message);
 				}
 			},
 			/**
@@ -398,7 +395,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 					INNER.writeLog(message, "INFO", logFile);
 					counter.info++;
 					messages.info.push(message);
-					messages.all.push(message);
+					messages.all.push("INFO: " + message);
 					INNER.showAlert("[INFO]", message, localize({ en: "informations", de: " der Informationen" }));
 				}
 			},
@@ -415,12 +412,12 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 					INNER.writeLog(message, "INFO", logFile);
 					counter.info++;
 					messages.info.push(message);
-					messages.all.push(message);
+					messages.all.push("INFO: " + message);
 				}
 				if (INNER.logLevel <= 2) {
 					INNER.writeLog(message, "INFO", logFile);
 					messages.warn.push(message);
-					messages.all.push(message);
+					messages.all.push("INFO: " + message);
 				}
 			},
 			/**
@@ -437,7 +434,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 					INNER.writeLog(message, "WARN", logFile);
 					counter.warn++;
 					messages.warn.push(message);
-					messages.all.push(message);
+					messages.all.push("WARN: " + message);
 				}
 			},
 			/**
@@ -451,7 +448,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 					INNER.writeLog(message, "WARN", logFile);
 					counter.warn++;
 					messages.warn.push(message);
-					messages.all.push(message);
+					messages.all.push("WARN: " + message);
 					INNER.showAlert("[WARN]", message + "\n\nPrüfen Sie auch das Logfile:\n" + logFile, localize({ en: "warnings", de: "der Warnungen" }));
 				}
 			},
@@ -466,7 +463,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 					INNER.writeLog(message, "ERROR", logFile);
 					counter.error++;
 					messages.error.push(message);
-					messages.all.push(message);
+					messages.all.push("ERROR: " + message);
 				}
 			},
 
@@ -550,8 +547,9 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			/**
 			* Returns all warnings
 			*/
-			getWarnings: function () {
-				return messages.warn.join("\n");
+			getWarnings: function (separator) {
+				if (!separator) separator = "\n";
+				return messages.warn.join(separator);
 			},
 			/**
 			* Shows all messages
@@ -568,9 +566,9 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			/**
 			* Returns all infos
 			*/
-			getInfos: function () {
-				return messages.info.join("\n");
-			},
+			getInfos: function (separator) {
+				if (!separator) separator = "\n";
+				return messages.info.join(separator);			},
 			/**
 			* Shows all errors
 			*/
@@ -580,16 +578,22 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			/**
 			* Returns all errors
 			*/
-			getErrors: function () {
-				return messages.error.join("\n");
+			getErrors: function (separator) {
+				if (!separator) separator = "\n";
+				return messages.error.join(separator);				
 			},
+
+			getMessages: function(separator) {
+				if (!separator) separator = "\n";
+				return messages.all.join(separator);				
+			},
+
 			/**
 			* Returns the counter Object
 			*/
 			getCounters: function () {
 				return counter;
 			},
-
 
 			/**
 			* Set silent Mode
@@ -642,7 +646,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 				INNER.writeLog(message, "INFO", logFile);
 				counter.info++;
 				messages.info.push(message);
-				messages.all.push(message);
+				messages.all.push("INFO: " + message);
 				if (typeof px != "undefined" && px.hasOwnProperty("debug") && px.debug) {
 					$.writeln(message);
 				}
