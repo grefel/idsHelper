@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 1.21
-* @Date: 2022-03-28
+* @Version: 1.22
+* @Date: 2022-04-26
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Autret https://forums.adobe.com/thread/1111415
 
@@ -157,7 +157,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 		}
 	};
 	INNER.showMessages = function (title, msgArray, type) {
-		if (!INNER.disableAlerts && msgArray.length > 0) {
+		if (!INNER.disableAlerts && msgArray.length > 0 && !app.hasOwnProperty("serverHostName")) {
 			var callingScriptVersion = "    ";
 			if ($.global.hasOwnProperty("px") && $.global.px.hasOwnProperty("projectName")) {
 				callingScriptVersion += px.projectName;
@@ -207,7 +207,10 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 		}
 	};
 	INNER.confirmMessages = function (title, msgArray, type) {
-		if (!INNER.disableAlerts && msgArray.length > 0) {
+		if (app.hasOwnProperty("serverHostName")) {
+			throw Error("Cannot confirm on server!");
+		}
+		else if (!INNER.disableAlerts && msgArray.length > 0) {
 			var callingScriptVersion = "    ";
 			// if ($.global.hasOwnProperty("px") && $.global.px.hasOwnProperty("projectName")) {
 			// 	callingScriptVersion += px.projectName;
