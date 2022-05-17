@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 1.22
-* @Date: 2022-04-26
+* @Version: 1.23
+* @Date: 2022-05-17
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Autret https://forums.adobe.com/thread/1111415
 
@@ -47,7 +47,12 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 	INNER.getPageNameFromObject = function (object) {
 		var pagePositionMessage = "";
 		if (object != null) {
-			object = object.getElements()[0]; // Get Object from Superclass like PageItem
+			try {
+				object = object.getElements()[0]; // Get Object from Superclass like PageItem
+			}
+			catch(e) {
+				return localize({ en: "Could not detect page", de: "Konnte Seite nicht ermitteln" }) + " > " + e.toString();
+			}
 			if (object.hasOwnProperty("sourceText")) {
 				object = object.sourceText;
 			}
