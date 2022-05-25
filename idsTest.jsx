@@ -137,12 +137,12 @@ var idsTest = function () {
 			message = message + " <em>Wertevergleich <span class='code'>assertEquals</span></em>";
 			try {
 				if (expected === actual) {
-					testResults.push({ failed: false, message: message, result: "Expected: <strong>" + expected + "</strong> Actual: <strong>" + actual + "</strong>" });
+					testResults.push({ failed: false, message: message, result: "Expected: <strong>" + escapeXML(expected) + "</strong> Actual: <strong>" + escapeXML(actual) + "</strong>" });
 					return true;
 				}
 				else {
-					testResults.push({ failed: true, message: message, result: "Expected: <strong>" + expected + "</strong> Actual: <strong>" + actual + "</strong>" });
-					if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + expected + "\nActual: " + actual + "\n\n");
+					testResults.push({ failed: true, message: message, result: "Expected: <strong>" + escapeXML(expected) + "</strong> Actual: <strong>" + escapeXML(actual) + "</strong>" });
+					if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + escapeXML(expected) + "\nActual: " + escapeXML(actual) + "\n\n");
 					return false;
 				}
 			}
@@ -167,12 +167,12 @@ var idsTest = function () {
 					actual = cleanInDesignString(actual);
 				}
 				if (expected === actual) {
-					testResults.push({ failed: false, message: message, result: "Expected: <strong>" + expected + "</strong> Actual: <strong>" + actual + "</strong>" });
+					testResults.push({ failed: false, message: message, result: "Expected: <strong>" + escapeXML(expected) + "</strong> Actual: <strong>" + escapeXML(actual) + "</strong>" });
 					return true;
 				}
 				else {
-					testResults.push({ failed: true, message: message, result: "Expected: <strong>" + expected + "</strong> Actual: <strong>" + actual + "</strong>" });
-					if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + expected + "\nActual: " + actual + "\n\n");
+					testResults.push({ failed: true, message: message, result: "Expected: <strong>" + escapeXML(expected) + "</strong> Actual: <strong>" + escapeXML(actual) + "</strong>" });
+					if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + escapeXML(expected) + "\nActual: " + escapeXML(actual) + "\n\n");
 					return false;
 				}
 			}
@@ -201,7 +201,7 @@ var idsTest = function () {
 				}
 				else {
 					testResults.push({ failed: true, message: message, result: "regex: " + regex });
-					if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + expected + "\nActual: " + actual + "\n\n");
+					if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + escapeXML(expected) + "\nActual: " + escapeXML(actual) + "\n\n");
 					return false;
 				}
 			}
@@ -232,7 +232,7 @@ var idsTest = function () {
 				}
 				else {
 					testResults.push({ failed: true, message: message, result: "searchValue: <strong>" + searchValue + "</strong>" });
-					if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + expected + "\nActual: " + actual + "\n\n")
+					if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + escapeXML(expected) + "\nActual: " + escapeXML(actual) + "\n\n")
 					return false;
 				}
 			}
@@ -263,7 +263,7 @@ var idsTest = function () {
 				}
 				else {
 					testResults.push({ failed: true, message: message, result: "searchValue: <strong>" + searchValue + "</strong>" });
-					if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + expected + "\nActual: " + actual + "\n\n");
+					if (consoleLog) $.writeln("Test: " + message + "\nExpected: " + escapeXML(expected) + "\nActual: " + escapeXML(actual) + "\n\n");
 					return false;
 				}
 			}
@@ -799,15 +799,15 @@ var idsTest = function () {
 
 				if (result.failed === "block") {
 					htmlString += '<div class="testName"><h1>' + result.message + '</h1>' +
-					'<p>' + escapeXML(result.result) + '</p></div>';
+						'<p>' + result.result + '</p></div>';
 				}
 				else if (result.failed) {
 					htmlString += '<div class="testFailed"><h3>' + result.message + '</h3>' +
-						'<p>' + escapeXML(result.result) + '</p></div>';
+						'<p>' + result.result + '</p></div>';
 				}
 				else {
 					htmlString += '<div class="testPassed"><h3>' + result.message + '</h3>' +
-						'<p>' + escapeXML(result.result) + '</p></div>';
+						'<p>' + result.result + '</p></div>';
 				}
 
 			}
