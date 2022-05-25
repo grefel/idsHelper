@@ -12,7 +12,7 @@ idsTest.setMeta({
 	testScriptVersion:"1.0",
 	version:"1"
 })
-idsTest.insertBlock("Testing idsLog"); 
+idsTest.insertBlock("Testing idsLog","info"); 
 idsTest.assertEquals("Message", true, "somethingToTest");  
 var htmlFile = File (Folder.desktop + "/report.html");
 idsTest.htmlReport(htmlFile);
@@ -118,9 +118,9 @@ var idsTest = function () {
 		string = string.replace(/[\uFEFF\u0EFF]/g, ''); // InDesign Spezialzeichen entfernen 
 		return string;
 	};
-	var esacpeXML = function (s) {
+	var escapeXML = function (s) {
 		var escapeMap = { '<': 'lt', '>': 'gt', '&': 'amp', '\'': 'apos', '"': 'quot' };
-		if (!s || s == "") return;
+		if (!s || s == "") return "";
 		return s.replace(/([<>&'"])/g, function (m, p1) { return '&' + escapeMap[p1] + ';'; });
 	}
 
@@ -799,15 +799,15 @@ var idsTest = function () {
 
 				if (result.failed === "block") {
 					htmlString += '<div class="testName"><h1>' + result.message + '</h1>' +
-						'<p/></div>';
+					'<p>' + escapeXML(result.result) + '</p></div>';
 				}
 				else if (result.failed) {
 					htmlString += '<div class="testFailed"><h3>' + result.message + '</h3>' +
-						'<p>' + esacpeXML(result.result) + '</p></div>';
+						'<p>' + escapeXML(result.result) + '</p></div>';
 				}
 				else {
 					htmlString += '<div class="testPassed"><h3>' + result.message + '</h3>' +
-						'<p>' + esacpeXML(result.result) + '</p></div>';
+						'<p>' + escapeXML(result.result) + '</p></div>';
 				}
 
 			}
