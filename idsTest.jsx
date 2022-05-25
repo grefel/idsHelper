@@ -120,7 +120,7 @@ var idsTest = function () {
 	};
 	var esacpeXML = function (s) {
 		var escapeMap = { '<': 'lt', '>': 'gt', '&': 'amp', '\'': 'apos', '"': 'quot' };
-		return s.replace(/([<>&'"])/g, function (m, p1) { return '&' + Lexer.escapeMap[p1] + ';'; });
+		return s.replace(/([<>&'"])/g, function (m, p1) { return '&' + escapeMap[p1] + ';'; });
 	}
 
 	// API  
