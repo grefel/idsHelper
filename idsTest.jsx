@@ -6,21 +6,28 @@
 * Usage: 
 
 //[at]include ../idsTest.jsx
-idsTest.insertBlock("Testing idsLog");  
+idsTest.setMeta({
+	name:"HTML Parser Test",
+	testScript:"pjXML.jsx",
+	testScriptVersion:"1.0",
+	version:"1"
+})
+idsTest.insertBlock("Testing idsLog"); 
 idsTest.assertEquals("Message", true, "somethingToTest");  
-idsTest.htmlReport();
-
+var htmlFile = File (Folder.desktop + "/report.html");
+idsTest.htmlReport(htmlFile);
 */
 
 var idsTest = function () {
 	// Private 
-	var version = "2021-04-27--1.2";
+	var version = "2022-05-25--1.21";
 	var meta = {
 		name: "",
 		version: "",
 		testScript: "",
 		testScriptVersion: ""
 	}
+	var testSuiteMeta = {}
 	var testResults = [];
 	var consoleLog = true;
 
@@ -111,6 +118,10 @@ var idsTest = function () {
 		string = string.replace(/[\uFEFF\u0EFF]/g, ''); // InDesign Spezialzeichen entfernen 
 		return string;
 	};
+	var esacpeXML = function (s) {
+		var escapeMap = { '<': 'lt', '>': 'gt', '&': 'amp', '\'': 'apos', '"': 'quot' };
+		return s.replace(/([<>&'"])/g, function (m, p1) { return '&' + Lexer.escapeMap[p1] + ';'; });
+	}
 
 	// API  
 	return {
@@ -670,7 +681,7 @@ var idsTest = function () {
 		 * @param {Object} testSuiteMeta 
 		 */
 		setMeta: function (testSuiteMeta) {
-			testSuiteMeta = testSuiteMeta;
+			this.testSuiteMeta = testSuiteMeta;
 		},
 		/**
 		 * Write failed test to console $.writeln()
@@ -787,15 +798,15 @@ var idsTest = function () {
 
 				if (result.failed === "block") {
 					htmlString += '<div class="testName"><h1>' + result.message + '</h1>' +
-						'<p>' + result.result + '</p></div>';
+						'<p>' +  esacpeXML(result.result) + '</p></div>';
 				}
 				else if (result.failed) {
 					htmlString += '<div class="testFailed"><h3>' + result.message + '</h3>' +
-						'<p>' + result.result + '</p></div>';
+						'<p>' + esacpeXML(result.result) + '</p></div>';
 				}
 				else {
 					htmlString += '<div class="testPassed"><h3>' + result.message + '</h3>' +
-						'<p>' + result.result + '</p></div>';
+						'<p>' + esacpeXML(result.result) + '</p></div>';
 				}
 
 			}
@@ -813,3 +824,4 @@ var idsTest = function () {
 		}
 	};
 }();
+
