@@ -120,6 +120,7 @@ var idsTest = function () {
 	};
 	var esacpeXML = function (s) {
 		var escapeMap = { '<': 'lt', '>': 'gt', '&': 'amp', '\'': 'apos', '"': 'quot' };
+		if (!s || s == "") return;
 		return s.replace(/([<>&'"])/g, function (m, p1) { return '&' + escapeMap[p1] + ';'; });
 	}
 
@@ -798,7 +799,7 @@ var idsTest = function () {
 
 				if (result.failed === "block") {
 					htmlString += '<div class="testName"><h1>' + result.message + '</h1>' +
-						'<p>' +  esacpeXML(result.result) + '</p></div>';
+						'<p/></div>';
 				}
 				else if (result.failed) {
 					htmlString += '<div class="testFailed"><h3>' + result.message + '</h3>' +
