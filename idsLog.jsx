@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 1.23
-* @Date: 2022-05-17
+* @Version: 1.24
+* @Date: 2022-07-27
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Autret https://forums.adobe.com/thread/1111415
 
@@ -161,6 +161,29 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			}
 		}
 	};
+	INNER.getMessageString = function (msgArray) {
+		for (var i = 0; i < msgArray.length; i++) {
+			if (msgArray[i] == undefined) {
+				msg = ""; // return ?
+			}
+			if (msgArray[i] instanceof Error) {
+				msgArray[i] = msgArray[i] + " -> " + msgArray[i].line
+			}
+			if (msgArray[i].constructor.name != String) {
+				msgArray[i] = msgArray[i].toString();
+			}
+		}
+		return msgArray.join("\n");
+	}
+	INNER.writeMessageToFile = function (msg, texFile) {
+		if (!texFile.name.match(/\.txt$/)) {
+			texFile = File(texFile.fullName + ".txt");
+		}
+		texFile.encoding = "UTF-8";
+		texFile.open("e");
+		texFile.writeln(msg);
+		texFile.close();
+	}
 	INNER.showMessages = function (title, msgArray, type) {
 		if (!INNER.disableAlerts && msgArray.length > 0 && !app.hasOwnProperty("serverHostName")) {
 			var callingScriptVersion = "    ";
@@ -169,19 +192,8 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			}
 			if ($.global.hasOwnProperty("px") && $.global.px.hasOwnProperty("version")) {
 				callingScriptVersion += " v" + px.version;
-			}
-			for (var i = 0; i < msgArray.length; i++) {
-				if (msgArray[i] == undefined) {
-					msg = ""; // return ?
-				}
-				if (msgArray[i] instanceof Error) {
-					msgArray[i] = msgArray[i] + " -> " + msgArray[i].line
-				}
-				if (msgArray[i].constructor.name != String) {
-					msgArray[i] = msgArray[i].toString();
-				}
-			}
-			var msg = msgArray.join("\n");
+			}			
+			var msg = INNER.getMessageString(msgArray) 
 			var dialogWin = new Window("dialog", title + callingScriptVersion);
 			dialogWin.etMsg = dialogWin.add("edittext", undefined, msg, { multiline: true, scrolling: true });
 			dialogWin.etMsg.maximumSize.height = 300;
@@ -196,13 +208,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			dialogWin.gControl.btSave.onClick = function () {
 				var texFile = File.saveDialog(localize({ en: "Save information in text file ", de: "Speichern der Informationen in einer Textdatei" }), INNER.getFileFilter(localize({ en: "Textfile ", de: "Textdatei" }) + ":*.txt"));
 				if (texFile) {
-					if (!texFile.name.match(/\.txt$/)) {
-						texFile = File(texFile.fullName + ".txt");
-					}
-					texFile.encoding = "UTF-8";
-					texFile.open("e");
-					texFile.writeln(msg);
-					texFile.close();
+					INNER.writeMessageToFile(msg, texFile);
 					dialogWin.close();
 				}
 			}
@@ -480,6 +486,13 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 			*/
 			showWarnings: function () {
 				INNER.showMessages("Es gab " + counter.warn + " Warnmeldungen", messages.warn, localize({ en: "warnings", de: "der Warnungen" }));
+			},
+			/**
+			* Write all warnings to a file
+			*/
+			writeWarningToFile: function (saveFile) {
+				var msg = INNER.getMessageString(messages.warn);
+				INNER.writeMessageToFile(msg, saveFile);
 			},
 			/**
 			* Confirm all infos
