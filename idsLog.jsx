@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 1.25
-* @Date: 2022-10-06
+* @Version: 1.26
+* @Date: 2023-01-17
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Autret https://forums.adobe.com/thread/1111415
 
@@ -129,7 +129,6 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
         }
     }
 
-
     INNER.writeLog = function (msg, severity, file) {
         var date = new Date();
         var month = date.getMonth() + 1;
@@ -150,7 +149,8 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
             file.writeln(dateString + " [" + severity + "] " + padString + "[" + msg + "]");
         }
         file.close();
-    };
+    }
+
     INNER.showAlert = function (title, msg, type) {
         if (!INNER.disableAlerts) {
             if (msg.length < 300) {
@@ -160,7 +160,8 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
                 INNER.showMessages(title, [msg], type);
             }
         }
-    };
+    }
+
     INNER.getMessageString = function (msgArray) {
         for (var i = 0; i < msgArray.length; i++) {
             if (msgArray[i] == undefined) {
@@ -175,6 +176,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
         }
         return msgArray.join("\n");
     }
+
     INNER.writeMessageToFile = function (msg, texFile) {
         if (!texFile.name.match(/\.txt$/)) {
             texFile = File(texFile.fullName + ".txt");
@@ -184,6 +186,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
         texFile.writeln(msg);
         texFile.close();
     }
+
     INNER.showMessages = function (title, msgArray, type) {
         if (!INNER.disableAlerts && msgArray.length > 0 && !app.hasOwnProperty("serverHostName")) {
             var callingScriptVersion = "    ";
@@ -216,7 +219,8 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
             button.active = true;
             dialogWin.show();
         }
-    };
+    }
+
     INNER.confirmMessages = function (title, msgArray, type) {
         if (app.hasOwnProperty("serverHostName")) {
             throw Error("Cannot confirm on server!");
@@ -258,10 +262,12 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
             button.active = true;
             return dialogWin.show();
         }
-    };
+    }
+
     INNER.confirm = function (message, noAsDefault, title) {
         return confirm(message, noAsDefault, title);
-    };
+    }
+
     INNER.getFileFilter = function (fileFilter) {
         if (fileFilter == undefined || File.fs == "Windows") {
             return fileFilter;
@@ -279,7 +285,8 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
                 }
             }
         }
-    };
+    }
+
     INNER.msToTime = function (microseconds) {
         var milliseconds = microseconds / 1000;
         var ms = parseInt((milliseconds % 1000) / 100)
@@ -300,7 +307,8 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
 
 
         return h + ':' + m + ':' + s + "." + ms;
-    };
+    }
+
     /****************
     * API 
     */
@@ -697,5 +705,5 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
                 return logFile;
             }
         }
-    };
+    }
 })($.global, { toString: function () { return 'idsLog'; } });
