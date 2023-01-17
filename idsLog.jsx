@@ -50,7 +50,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
             try {
                 object = object.getElements()[0]; // Get Object from Superclass like PageItem
             }
-            catch(e) {
+            catch (e) {
                 return localize({ en: "Could not detect page", de: "Konnte Seite nicht ermitteln" }) + " > " + e.toString();
             }
             if (object.hasOwnProperty("sourceText")) {
@@ -195,8 +195,9 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
             }
             if ($.global.hasOwnProperty("px") && $.global.px.hasOwnProperty("version")) {
                 callingScriptVersion += " v" + px.version;
-            }			
-            var msg = INNER.getMessageString(msgArray) 
+            }
+            
+            var msg = INNER.getMessageString(msgArray)
             var dialogWin = new Window("dialog", title + callingScriptVersion);
             dialogWin.etMsg = dialogWin.add("edittext", undefined, msg, { multiline: true, scrolling: true });
             dialogWin.etMsg.maximumSize.height = 300;
@@ -488,7 +489,6 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
                     messages.all.push("ERROR: " + message);
                 }
             },
-
             /**
             * Shows all warnings
             */
@@ -597,7 +597,8 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
             */
             getInfos: function (separator) {
                 if (!separator) separator = "\n";
-                return messages.info.join(separator);			},
+                return messages.info.join(separator);
+            },
             /**
             * Shows all errors
             */
@@ -609,12 +610,12 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
             */
             getErrors: function (separator) {
                 if (!separator) separator = "\n";
-                return messages.error.join(separator);				
+                return messages.error.join(separator);
             },
 
-            getMessages: function(separator) {
+            getMessages: function (separator) {
                 if (!separator) separator = "\n";
-                return messages.all.join(separator);				
+                return messages.all.join(separator);
             },
 
             /**
