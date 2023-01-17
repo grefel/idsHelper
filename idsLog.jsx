@@ -190,14 +190,22 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
     INNER.showMessages = function (title, msgArray, type) {
         if (!INNER.disableAlerts && msgArray.length > 0 && !app.hasOwnProperty("serverHostName")) {
             var callingScriptVersion = "    ";
+            var projectName = "no-projectName";
             if ($.global.hasOwnProperty("px") && $.global.px.hasOwnProperty("projectName")) {
-                callingScriptVersion += px.projectName;
+                projectName = px.projectName;
             }
+            var version = "no-version";
             if ($.global.hasOwnProperty("px") && $.global.px.hasOwnProperty("version")) {
-                callingScriptVersion += " v" + px.version;
+                version = px.version;
             }
-            
-            var msg = INNER.getMessageString(msgArray)
+            var debug = "no-debug-flag";
+            if ($.global.hasOwnProperty("px") && $.global.px.hasOwnProperty("debug")) {
+                debug =  px.debug + "";
+            }
+            var callingScriptVersion = "    " + projectName + " v" + version;
+            var msg = "Informationen zum Skript: Version: " + version + " Debug: " + debug + " ScriptPrefVersion: " + app.scriptPreferences.version + " InDesign " + app.version + "\n\n";
+
+            msg += INNER.getMessageString(msgArray)
             var dialogWin = new Window("dialog", title + callingScriptVersion);
             dialogWin.etMsg = dialogWin.add("edittext", undefined, msg, { multiline: true, scrolling: true });
             dialogWin.etMsg.maximumSize.height = 300;
@@ -228,12 +236,12 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
         }
         else if (!INNER.disableAlerts && msgArray.length > 0) {
             var callingScriptVersion = "    ";
-            // if ($.global.hasOwnProperty("px") && $.global.px.hasOwnProperty("projectName")) {
-            // 	callingScriptVersion += px.projectName;
-            // }
-            // if ($.global.hasOwnProperty("px") && $.global.px.hasOwnProperty("version")) {
-            // 	callingScriptVersion += " v" + px.version;
-            // }
+            if ($.global.hasOwnProperty("px") && $.global.px.hasOwnProperty("projectName")) {
+            	callingScriptVersion += px.projectName;
+            }
+            if ($.global.hasOwnProperty("px") && $.global.px.hasOwnProperty("version")) {
+            	callingScriptVersion += " v" + px.version;
+            }
             var msg = msgArray.join("\n");
             var dialogWin = new Window("dialog", title + callingScriptVersion);
             dialogWin.etMsg = dialogWin.add("edittext", undefined, msg, { multiline: true, scrolling: true });
