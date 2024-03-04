@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 1.26
-* @Date: 2023-01-17
+* @Version: 1.27
+* @Date: 2024-03-04
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Autret https://forums.adobe.com/thread/1111415
 
@@ -115,6 +115,9 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
                             else {
                                 return pagePositionMessage + localize({ en: "Could not detect page", de: "Konnte Seite nicht ermitteln" });
                             }
+                        }
+                        else {
+                            object = object.parent;
                         }
                         break;
                     case Application: return pagePositionMessage + localize({ en: "Could not detect page Application", de: "Konnte Seite nicht ermitteln Application" });
