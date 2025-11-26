@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 1.27
-* @Date: 2024-03-04
+* @Version: 1.28
+* @Date: 2025-11-26
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Autret https://forums.adobe.com/thread/1111415
 
@@ -203,7 +203,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
             }
             var debug = "no-debug-flag";
             if ($.global.hasOwnProperty("px") && $.global.px.hasOwnProperty("debug")) {
-                debug =  px.debug + "";
+                debug = px.debug + "";
             }
             var callingScriptVersion = "    " + projectName + " v" + version;
             var msg = "Informationen zum Skript: Version: " + version + " Debug: " + debug + " ScriptPrefVersion: " + app.scriptPreferences.version + " InDesign " + app.version + "\n\n";
@@ -240,10 +240,10 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
         else if (!INNER.disableAlerts && msgArray.length > 0) {
             var callingScriptVersion = "    ";
             if ($.global.hasOwnProperty("px") && $.global.px.hasOwnProperty("projectName")) {
-            	callingScriptVersion += px.projectName;
+                callingScriptVersion += px.projectName;
             }
             if ($.global.hasOwnProperty("px") && $.global.px.hasOwnProperty("version")) {
-            	callingScriptVersion += " v" + px.version;
+                callingScriptVersion += " v" + px.version;
             }
             var msg = msgArray.join("\n");
             var dialogWin = new Window("dialog", title + callingScriptVersion);
@@ -583,6 +583,13 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
                 return res;
             },
 
+            /**
+            * Get Page name from Object
+            * @object {Object} Log the page name of the given object
+            */
+            getPageNameFromObject: function (object) {
+                return INNER.getPageNameFromObject(object);
+            },
 
             /**
             * Returns all warnings
