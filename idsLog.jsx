@@ -1,7 +1,7 @@
 ﻿/****************
 * Logging Class 
-* @Version: 1.28
-* @Date: 2025-11-26
+* @Version: 1.29
+* @Date: 2026-11-11
 * @Author: Gregor Fellenz, http://www.publishingx.de
 * Acknowledgments: Library design pattern from Marc Autret https://forums.adobe.com/thread/1111415
 
@@ -376,6 +376,15 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
             error: []
         }
 
+        // Context from warnInfo, moved to messages.warn only when a warning follows
+        var pendingWarnInfo = null;
+        function flushWarnInfo() {
+            if (pendingWarnInfo != null) {
+                messages.warn.push(pendingWarnInfo);
+                pendingWarnInfo = null;
+            }
+        }
+
         return {
             /**
             * Writes a debug log message
@@ -434,13 +443,18 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
                 }
             },
             /**
-            * Writes an info message and adds the message to the warn array
-                useful to add information to the warning messages without incrementing the warn counter.
-                e.g. put information about file name while processing different documents.
+            * Sets a context message (e.g. current file or TOC) for the warning dialog.
+                The context is written to the log as INFO and shown in the warning dialog only
+                once, directly before the next warn/warnAlert. A new warnInfo replaces it,
+                warnInfo() without arguments clears it (call at the end of a processing round).
             * @message {String} message Message to log.
             * @object {Object} Log the page name of the given object
             */
             warnInfo: function (message, object) {
+                if (message == undefined) {
+                    pendingWarnInfo = null;
+                    return;
+                }
                 message = INNER.processMsg(message, object);
                 if (INNER.logLevel <= 1) {
                     INNER.writeLog(message, "INFO", logFile);
@@ -449,9 +463,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
                     messages.all.push("INFO: " + message);
                 }
                 if (INNER.logLevel <= 2) {
-                    INNER.writeLog(message, "INFO", logFile);
-                    messages.warn.push(message);
-                    messages.all.push("INFO: " + message);
+                    pendingWarnInfo = message;
                 }
             },
             /**
@@ -467,6 +479,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
                 if (INNER.logLevel <= 2) {
                     INNER.writeLog(message, "WARN", logFile);
                     counter.warn++;
+                    flushWarnInfo();
                     messages.warn.push(message);
                     messages.all.push("WARN: " + message);
                 }
@@ -481,6 +494,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
                 if (INNER.logLevel <= 2) {
                     INNER.writeLog(message, "WARN", logFile);
                     counter.warn++;
+                    flushWarnInfo();
                     messages.warn.push(message);
                     messages.all.push("WARN: " + message);
                     INNER.showAlert("[WARN]", message + "\n\nPrüfen Sie auch das Logfile:\n" + logFile, localize({ en: "warnings", de: "der Warnungen" }));
@@ -664,6 +678,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
                 counter.error = 0;
                 messages.info = [];
                 messages.warn = [];
+                pendingWarnInfo = null;
                 messages.error = [];
                 messages.all = [];
             },
@@ -677,6 +692,7 @@ $.global.hasOwnProperty('idsLog') || (function (HOST, SELF) {
                 counter.error = 0;
                 messages.info = [];
                 messages.warn = [];
+                pendingWarnInfo = null;
                 messages.error = [];
                 messages.all = [];
             },
